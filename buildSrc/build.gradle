@@ -1,0 +1,22 @@
+plugins {
+    id 'groovy-gradle-plugin'
+    id 'java-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+}
+
+gradlePlugin {
+    plugins {
+        formatJavaPlugin {
+            id = 'javaCodeFormatter'
+            implementationClass = 'zk.fornax.gradle.plugin.JavaFormatterPlugin'
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.eclipse.jdt:org.eclipse.jdt.junit.core:3.11.200'
+    implementation 'org.dom4j:dom4j:2.1.3'
+}

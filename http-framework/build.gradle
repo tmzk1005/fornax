@@ -1,0 +1,10 @@
+plugins {
+    id 'zk.fornax.java-base-conventions'
+}
+
+base {
+    archivesBaseName = 'fornax-http-framework'
+}
+
+dependencies {
+}

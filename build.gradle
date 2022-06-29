@@ -1,0 +1,17 @@
+task clean {
+    delete "build"
+}
+
+task build {
+    dependsOn ':release:releaseTarGz'
+    doFirst {
+        delete 'build'
+        mkdir 'build'
+    }
+    doLast {
+        copy {
+            from 'release/build/distributions'
+            into 'build'
+        }
+    }
+}

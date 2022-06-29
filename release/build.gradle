@@ -1,0 +1,23 @@
+plugins {
+    id 'zk.fornax.java-base-conventions'
+}
+
+base {
+    archivesBaseName = 'fornax-release'
+}
+
+dependencies {
+    implementation project(path: ':gateway', configuration: 'default')
+    implementation project(path: ':manager', configuration: 'default')
+}
+
+tasks.create(name: "releaseTarGz", dependsOn: configurations.archives.artifacts, type: Tar) {
+    into "fornax"
+    compression = Compression.GZIP
+    from { project(":gateway").jar } { into "libs/" }
+    from { project(":gateway").findAll { it.getSubprojects().isEmpty() }.collect { it.configurations.compileClasspath } } { into "libs/" duplicatesStrategy DuplicatesStrategy.EXCLUDE }
+    from { project(":manager").jar } { into "libs/" }
+    from { project(":manager").findAll { it.getSubprojects().isEmpty() }.collect { it.configurations.compileClasspath } } { into "libs/" duplicatesStrategy DuplicatesStrategy.EXCLUDE }
+    from { 'bin' } { into 'bin/' }
+    from { 'conf' } { into 'conf/' }
+}
