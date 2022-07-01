@@ -7,4 +7,6 @@ base {
 }
 
 dependencies {
+    implementation project(path: ':common', configuration: 'default')
+    implementation 'io.projectreactor.netty:reactor-netty-http'
 }

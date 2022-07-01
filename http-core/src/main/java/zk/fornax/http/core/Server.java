@@ -6,6 +6,4 @@ public interface Server {
 
     void shutdown();
 
-    void awaitShutdown();
-
 }

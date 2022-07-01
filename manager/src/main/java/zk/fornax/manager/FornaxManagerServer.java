@@ -17,9 +17,4 @@ public class FornaxManagerServer implements Server {
         log.info("FornaxManagerServer shutdown");
     }
 
-    @Override
-    public void awaitShutdown() {
-        log.info("FornaxManagerServer awaitShutdown");
-    }
-
 }

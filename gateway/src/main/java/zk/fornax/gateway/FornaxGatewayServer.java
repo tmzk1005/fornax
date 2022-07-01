@@ -17,9 +17,4 @@ public class FornaxGatewayServer implements Server {
         log.info("FornaxGatewayServer shutdown");
     }
 
-    @Override
-    public void awaitShutdown() {
-        log.info("FornaxGatewayServer awaitShutdown");
-    }
-
 }
