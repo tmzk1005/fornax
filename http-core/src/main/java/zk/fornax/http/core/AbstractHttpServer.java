@@ -109,10 +109,12 @@ public abstract class AbstractHttpServer implements Server {
     }
 
     protected Mono<Void> beforeStart() {
+        httpApiLocator.startup();
         return Mono.empty();
     }
 
     protected Mono<Void> beforeStop() {
+        httpApiLocator.shutdown();
         return Mono.empty();
     }
 
