@@ -7,4 +7,5 @@ base {
 }
 
 dependencies {
+    implementation project(path: ':http-core', configuration: 'default')
 }
