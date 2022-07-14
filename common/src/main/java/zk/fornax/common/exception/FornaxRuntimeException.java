@@ -1,6 +1,6 @@
 package zk.fornax.common.exception;
 
-public class FornaxRuntimeException extends Exception {
+public class FornaxRuntimeException extends RuntimeException {
 
     public FornaxRuntimeException(String message) {
         super(message);

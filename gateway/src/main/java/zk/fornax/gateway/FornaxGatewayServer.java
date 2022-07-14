@@ -3,8 +3,6 @@ package zk.fornax.gateway;
 import java.util.List;
 import java.util.Objects;
 
-import lombok.extern.slf4j.Slf4j;
-
 import zk.fornax.common.httpapi.BackendType;
 import zk.fornax.gateway.locator.GatewayHttpApiLocator;
 import zk.fornax.http.core.AbstractHttpServer;
@@ -13,7 +11,6 @@ import zk.fornax.http.core.exchange.WebExchange;
 import zk.fornax.http.core.handler.ChainBasedWebHandler;
 import zk.fornax.http.core.handler.WebHandler;
 
-@Slf4j
 public class FornaxGatewayServer extends AbstractHttpServer {
 
     public static final int DEFAULT_PORT = 8000;
