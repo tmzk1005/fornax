@@ -8,6 +8,7 @@
 .vscode
 *.suo
 *.njsproj
+**/bin/main/
 
 # vim ingore
 *.swp
