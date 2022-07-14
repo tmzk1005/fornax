@@ -75,7 +75,7 @@ public abstract class AbstractHttpServer implements Server {
         if (!canStartup) {
             return;
         }
-        disposableServer = HttpServer.create().host(host).port(port).handle(new GraceHttpHandler()).bindNow();
+        disposableServer = HttpServer.create().host(host).port(port).handle(new HttpHandler()).bindNow();
         beforeStart().block(Duration.ofSeconds(10));
         started.set(true);
         isStartingUp.set(false);
@@ -120,7 +120,7 @@ public abstract class AbstractHttpServer implements Server {
 
     protected abstract WebHandler getWebHandler(WebExchange webExchange);
 
-    private class GraceHttpHandler implements BiFunction<HttpServerRequest, HttpServerResponse, Mono<Void>> {
+    private class HttpHandler implements BiFunction<HttpServerRequest, HttpServerResponse, Mono<Void>> {
 
         @Override
         public Mono<Void> apply(HttpServerRequest request, HttpServerResponse response) {

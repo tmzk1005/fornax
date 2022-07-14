@@ -3,7 +3,13 @@ package zk.fornax.gateway;
 import java.util.List;
 import java.util.Objects;
 
+import reactor.netty.http.client.HttpClient;
+
 import zk.fornax.common.httpapi.BackendType;
+import zk.fornax.gateway.filter.ExceptionHandleHttpApiFilter;
+import zk.fornax.gateway.filter.HttpRoutingFilter;
+import zk.fornax.gateway.filter.MockHttpApiFilter;
+import zk.fornax.gateway.filter.RouteToRequestUrlFilter;
 import zk.fornax.gateway.locator.GatewayHttpApiLocator;
 import zk.fornax.http.core.AbstractHttpServer;
 import zk.fornax.http.core.HttpApiMatcherImpl;
@@ -25,8 +31,19 @@ public class FornaxGatewayServer extends AbstractHttpServer {
     }
 
     private void initWebHandlers() {
-        mockWebHandler = new ChainBasedWebHandler(List.of());
-        httpWebHandler = new ChainBasedWebHandler(List.of());
+        final HttpClient httpClient = HttpClient.create();
+        ExceptionHandleHttpApiFilter exceptionHandleHttpApiFilter = new ExceptionHandleHttpApiFilter();
+        mockWebHandler = new ChainBasedWebHandler(List.of(
+            exceptionHandleHttpApiFilter,
+            new MockHttpApiFilter()
+        ));
+        httpWebHandler = new ChainBasedWebHandler(
+            List.of(
+                exceptionHandleHttpApiFilter,
+                new RouteToRequestUrlFilter(),
+                new HttpRoutingFilter(httpClient)
+            )
+        );
     }
 
     @Override
