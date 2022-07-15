@@ -10,8 +10,11 @@ import zk.fornax.gateway.filter.ExceptionHandleHttpApiFilter;
 import zk.fornax.gateway.filter.HttpRoutingFilter;
 import zk.fornax.gateway.filter.MockHttpApiFilter;
 import zk.fornax.gateway.filter.RouteToRequestUrlFilter;
+import zk.fornax.gateway.locator.CompositeHttpApiLocator;
 import zk.fornax.gateway.locator.GatewayHttpApiLocator;
+import zk.fornax.gateway.locator.JsonFileHttpApiLocator;
 import zk.fornax.http.core.AbstractHttpServer;
+import zk.fornax.http.core.HttpApiLocator;
 import zk.fornax.http.core.HttpApiMatcherImpl;
 import zk.fornax.http.core.exchange.WebExchange;
 import zk.fornax.http.core.handler.ChainBasedWebHandler;
@@ -26,17 +29,19 @@ public class FornaxGatewayServer extends AbstractHttpServer {
     private WebHandler httpWebHandler;
 
     public FornaxGatewayServer() {
-        super(DEFAULT_PORT, new GatewayHttpApiLocator(), new HttpApiMatcherImpl(), null);
+        super(DEFAULT_PORT, createHttpApiLocator(), new HttpApiMatcherImpl(), null);
         initWebHandlers();
     }
 
     private void initWebHandlers() {
         final HttpClient httpClient = HttpClient.create();
         ExceptionHandleHttpApiFilter exceptionHandleHttpApiFilter = new ExceptionHandleHttpApiFilter();
-        mockWebHandler = new ChainBasedWebHandler(List.of(
-            exceptionHandleHttpApiFilter,
-            new MockHttpApiFilter()
-        ));
+        mockWebHandler = new ChainBasedWebHandler(
+            List.of(
+                exceptionHandleHttpApiFilter,
+                new MockHttpApiFilter()
+            )
+        );
         httpWebHandler = new ChainBasedWebHandler(
             List.of(
                 exceptionHandleHttpApiFilter,
@@ -58,6 +63,12 @@ public class FornaxGatewayServer extends AbstractHttpServer {
             return httpWebHandler;
         }
         return null;
+    }
+
+    private static HttpApiLocator createHttpApiLocator() {
+        JsonFileHttpApiLocator jsonFileHttpApiLocator = new JsonFileHttpApiLocator("TODO");
+        GatewayHttpApiLocator gatewayHttpApiLocator = new GatewayHttpApiLocator();
+        return new CompositeHttpApiLocator(jsonFileHttpApiLocator, gatewayHttpApiLocator);
     }
 
 }
