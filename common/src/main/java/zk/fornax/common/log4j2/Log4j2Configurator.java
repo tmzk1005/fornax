@@ -48,7 +48,11 @@ public final class Log4j2Configurator {
     }
 
     public static void configure(Level level, String appName) {
-        configure(level, LAYOUT_PATTERN, DEFAULT_LOG_FILE_DIR, appName, 4, 100, 100);
+        configure(level, appName, DEFAULT_LOG_FILE_DIR);
+    }
+
+    public static void configure(Level level, String appName, String logPath) {
+        configure(level, LAYOUT_PATTERN, logPath, appName, 4, 100, 100);
     }
 
     public static void configure(
