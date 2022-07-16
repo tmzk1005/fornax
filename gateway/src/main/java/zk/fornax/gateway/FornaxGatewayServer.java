@@ -1,5 +1,6 @@
 package zk.fornax.gateway;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,14 +23,17 @@ import zk.fornax.http.core.handler.WebHandler;
 
 public class FornaxGatewayServer extends AbstractHttpServer {
 
-    public static final int DEFAULT_PORT = 8000;
+    private final GatewayConfigurtion configurtion;
 
     private WebHandler mockWebHandler;
 
     private WebHandler httpWebHandler;
 
-    public FornaxGatewayServer() {
-        super(DEFAULT_PORT, createHttpApiLocator(), new HttpApiMatcherImpl(), null);
+    public FornaxGatewayServer(GatewayConfigurtion configurtion) {
+        super(configurtion.getServerHost(), configurtion.getServerPort());
+        this.configurtion = configurtion;
+        this.httpApiMatcher = new HttpApiMatcherImpl();
+        configureHttpApiLocator();
         initWebHandlers();
     }
 
@@ -65,10 +69,15 @@ public class FornaxGatewayServer extends AbstractHttpServer {
         return null;
     }
 
-    private static HttpApiLocator createHttpApiLocator() {
-        JsonFileHttpApiLocator jsonFileHttpApiLocator = new JsonFileHttpApiLocator("TODO");
-        GatewayHttpApiLocator gatewayHttpApiLocator = new GatewayHttpApiLocator();
-        return new CompositeHttpApiLocator(jsonFileHttpApiLocator, gatewayHttpApiLocator);
+    private HttpApiLocator configureHttpApiLocator() {
+        List<HttpApiLocator> httpApiLocators = new ArrayList<>();
+        String apiJsonFile = configurtion.getApiJsonFile();
+        if (Objects.nonNull(apiJsonFile)) {
+            JsonFileHttpApiLocator jsonFileHttpApiLocator = new JsonFileHttpApiLocator(configurtion.getApiJsonFile());
+            httpApiLocators.add(jsonFileHttpApiLocator);
+        }
+        httpApiLocators.add(new GatewayHttpApiLocator());
+        return new CompositeHttpApiLocator(httpApiLocators.toArray(new HttpApiLocator[0]));
     }
 
 }

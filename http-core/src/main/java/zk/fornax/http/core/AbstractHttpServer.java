@@ -25,17 +25,15 @@ import zk.fornax.http.core.session.WebSessionManager;
 @Log4j2
 public abstract class AbstractHttpServer implements Server {
 
-    public static final String DEFAULT_HOST = "0.0.0.0";
-
     protected final String host;
 
     protected final int port;
 
-    protected final HttpApiLocator httpApiLocator;
+    protected HttpApiLocator httpApiLocator;
 
-    protected final HttpApiMatcher httpApiMatcher;
+    protected HttpApiMatcher httpApiMatcher;
 
-    protected final WebSessionManager webSessionManager;
+    protected WebSessionManager webSessionManager;
 
     protected DisposableServer disposableServer;
 
@@ -45,11 +43,9 @@ public abstract class AbstractHttpServer implements Server {
 
     protected final AtomicBoolean started = new AtomicBoolean(false);
 
-    protected AbstractHttpServer(
-        int port, HttpApiLocator httpApiLocator,
-        HttpApiMatcher httpApiMatcher, WebSessionManager webSessionManager
-    ) {
-        this(DEFAULT_HOST, port, httpApiLocator, httpApiMatcher, webSessionManager);
+    protected AbstractHttpServer(String host, int port) {
+        this.host = host;
+        this.port = port;
     }
 
     protected AbstractHttpServer(
@@ -94,13 +90,13 @@ public abstract class AbstractHttpServer implements Server {
         }
         beforeStop().block(Duration.ofSeconds(10));
         if (Objects.isNull(disposableServer)) {
-            log.warn("No need to stop a already stopped GraceHttpServer.");
+            log.warn("No need to stop a already stopped HttpServer.");
             return;
         }
         try {
             disposableServer.disposeNow(Duration.ofSeconds(5));
         } catch (Exception exception) {
-            log.error("Exception happened while try to stop GraceHttpServer.", exception);
+            log.error("Exception happened while try to stop HttpServer.", exception);
         }
         disposableServer = null;
         isShuttingDown.set(false);

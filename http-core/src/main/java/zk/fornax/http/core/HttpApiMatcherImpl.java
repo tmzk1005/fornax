@@ -16,7 +16,7 @@ public class HttpApiMatcherImpl implements HttpApiMatcher {
 
     private static final AntPathMatcher ANT_PATH_MATCHER = AntPathMatcher.getDefaultInstance();
 
-    public static final String VERSION_HEADER_NAME = "X-Grace-ApiVersion";
+    public static final String VERSION_HEADER_NAME = "X-Fornax-ApiVersion";
 
     @Override
     public Mono<Boolean> match(HttpServerRequest request, HttpApi httpApi) {

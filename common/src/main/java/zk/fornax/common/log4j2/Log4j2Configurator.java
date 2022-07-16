@@ -26,7 +26,7 @@ public final class Log4j2Configurator {
 
     public static final String DEFAULT_LOG_FILE_DIR = "/var/log/fornax";
 
-    public static final String DEFAULT_LOG_FILE_NAME = "grace";
+    public static final String DEFAULT_LOG_FILE_NAME = "fornax";
 
     private Log4j2Configurator() {
     }
