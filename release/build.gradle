@@ -1,6 +1,23 @@
+import java.nio.file.Files
+
+def createJarNameListForProject(String projectName) {
+    def theProject = project(":${projectName}")
+    def jarFileNames = []
+    jarFileNames.add(theProject.jar.archiveFileName.get())
+    for (jarFile in theProject.configurations.compileClasspath) {
+        jarFileNames.add(jarFile.getName())
+    }
+    Files.writeString(project.file("conf/.${projectName}.classpath").toPath(), String.join('\n', jarFileNames))
+}
+
 tasks.create(name: "releaseTarGz", type: Tar) {
     dependsOn project(":gateway").tasks.getByName("build")
     dependsOn project(":manager").tasks.getByName("build")
+
+    doFirst {
+        createJarNameListForProject("gateway")
+        createJarNameListForProject("manager")
+    }
 
     def releaseName = "${rootProject.name}-${rootProject.version}"
 
@@ -19,6 +36,11 @@ tasks.create(name: "releaseTarGz", type: Tar) {
             project(":manager").jar
         ] 
     } { into "libs/" duplicatesStrategy DuplicatesStrategy.EXCLUDE }
+
+    doLast {
+        delete "conf/.gateway.classpath"
+        delete "conf/.manager.classpath"
+    }
 }
 
 task clean {
