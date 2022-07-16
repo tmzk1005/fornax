@@ -1,20 +1,26 @@
-plugins {
-    id 'zk.fornax.java-base-conventions'
-}
+tasks.create(name: "releaseTarGz", type: Tar) {
+    dependsOn project(":gateway").tasks.getByName("build")
+    dependsOn project(":manager").tasks.getByName("build")
 
-base {
-    archivesBaseName = 'fornax-release'
-}
+    def releaseName = "${rootProject.name}-${rootProject.version}"
 
-dependencies {
-    implementation project(path: ':gateway', configuration: 'default')
-    implementation project(path: ':manager', configuration: 'default')
-}
-
-tasks.create(name: "releaseTarGz", dependsOn: configurations.archives.artifacts, type: Tar) {
-    into "fornax"
+    destinationDirectory = project.buildDir
+    archiveFileName = "${releaseName}.tgz"
     compression = Compression.GZIP
-    from { project.configurations.compileClasspath } { into "libs/" duplicatesStrategy DuplicatesStrategy.EXCLUDE }
+
+    into releaseName
     from { 'bin' } { into 'bin/' }
     from { 'conf' } { into 'conf/' }
+    from { 
+        [
+            project(":gateway").configurations.compileClasspath,
+            project(":gateway").jar,
+            project(":manager").configurations.compileClasspath,
+            project(":manager").jar
+        ] 
+    } { into "libs/" duplicatesStrategy DuplicatesStrategy.EXCLUDE }
+}
+
+task clean {
+    delete "build"
 }

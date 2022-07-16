@@ -1,17 +1,7 @@
-task clean {
-    delete "build"
+allprojects {
+    version = '0.1-SNAPSHOT'
 }
 
-task build {
-    dependsOn ':release:releaseTarGz'
-    doFirst {
-        delete 'build'
-        mkdir 'build'
-    }
-    doLast {
-        copy {
-            from 'release/build/distributions'
-            into 'build'
-        }
-    }
+task clean {
+    delete "build"
 }
