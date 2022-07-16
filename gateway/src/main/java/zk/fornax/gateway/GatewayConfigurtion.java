@@ -3,13 +3,13 @@ package zk.fornax.gateway;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Log4j2
 @Command(name = "fornax-gateway", version = "1.0", mixinStandardHelpOptions = true, description = "A http api gateway server.")
 public class GatewayConfigurtion implements Runnable {
+
+    boolean methodRunExecuted = false;
 
     private final AtomicBoolean init = new AtomicBoolean(false);
 
@@ -39,13 +39,14 @@ public class GatewayConfigurtion implements Runnable {
 
     @Override
     public void run() {
+        methodRunExecuted = true;
         if (init.compareAndSet(false, true)) {
             initAfterCommandLineParsed();
         }
     }
 
     private void initAfterCommandLineParsed() {
-        log.info("Command line arguments parsed succceed.");
+        // TODO
     }
 
     enum LogLevel {

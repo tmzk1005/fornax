@@ -10,7 +10,7 @@ public class FornaxGatewayServerBootstrap {
     public static void main(String[] args) {
         final GatewayConfigurtion gatewayConfigurtion = new GatewayConfigurtion();
         int exitCode = new CommandLine(gatewayConfigurtion).execute(args);
-        if (exitCode != 0) {
+        if (exitCode != 0 || !gatewayConfigurtion.methodRunExecuted) {
             System.exit(exitCode);
         }
         Log4j2Configurator.configure(Level.getLevel(gatewayConfigurtion.getLogLevel().name()), "fornax-gateway", gatewayConfigurtion.getLogPath());

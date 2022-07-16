@@ -14,6 +14,8 @@ tasks.create(name: "releaseTarGz", type: Tar) {
     dependsOn project(":gateway").tasks.getByName("build")
     dependsOn project(":manager").tasks.getByName("build")
 
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+
     doFirst {
         createJarNameListForProject("gateway")
         createJarNameListForProject("manager")
@@ -26,8 +28,8 @@ tasks.create(name: "releaseTarGz", type: Tar) {
     compression = Compression.GZIP
 
     into releaseName
-    from { 'bin' } { into 'bin/' }
-    from { 'conf' } { into 'conf/' }
+    from { 'bin' } { into 'bin/' fileMode 0755 }
+    from { 'conf' } { into 'conf/' fileMode 0644 }
     from { 
         [
             project(":gateway").configurations.compileClasspath,
@@ -35,7 +37,7 @@ tasks.create(name: "releaseTarGz", type: Tar) {
             project(":manager").configurations.compileClasspath,
             project(":manager").jar
         ] 
-    } { into "libs/" duplicatesStrategy DuplicatesStrategy.EXCLUDE }
+    } { into "libs/" fileMode 0644 }
 
     doLast {
         delete "conf/.gateway.classpath"

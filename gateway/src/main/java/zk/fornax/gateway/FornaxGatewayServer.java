@@ -69,7 +69,7 @@ public class FornaxGatewayServer extends AbstractHttpServer {
         return null;
     }
 
-    private HttpApiLocator configureHttpApiLocator() {
+    private void configureHttpApiLocator() {
         List<HttpApiLocator> httpApiLocators = new ArrayList<>();
         String apiJsonFile = configurtion.getApiJsonFile();
         if (Objects.nonNull(apiJsonFile)) {
@@ -77,7 +77,7 @@ public class FornaxGatewayServer extends AbstractHttpServer {
             httpApiLocators.add(jsonFileHttpApiLocator);
         }
         httpApiLocators.add(new GatewayHttpApiLocator());
-        return new CompositeHttpApiLocator(httpApiLocators.toArray(new HttpApiLocator[0]));
+        this.httpApiLocator = new CompositeHttpApiLocator(httpApiLocators.toArray(new HttpApiLocator[0]));
     }
 
 }
