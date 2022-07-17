@@ -15,15 +15,27 @@
         }
     },
     {
-        "id": "api-httpbin",
+        "id": "api-httpbin-get",
         "groupDomain": "www.fornax.com",
-        "httpMethods": ["GET", "POST", "PUT", "DELETE"],
+        "httpMethods": ["GET"],
         "path": "/httpbin",
         "backendType": "HTTP",
         "httpBackend": {
             "host": "httpbin.org",
             "port": 80,
             "path": "/get"
+        }
+    },
+    {
+        "id": "api-httpbin-post",
+        "groupDomain": "www.fornax.com",
+        "httpMethods": ["POST"],
+        "path": "/httpbin",
+        "backendType": "HTTP",
+        "httpBackend": {
+            "host": "httpbin.org",
+            "port": 80,
+            "path": "/post"
         }
     }
 ]

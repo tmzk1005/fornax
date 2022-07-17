@@ -13,6 +13,8 @@ import zk.fornax.gateway.filter.ExceptionHandleHttpApiFilter;
 import zk.fornax.gateway.filter.HttpRoutingFilter;
 import zk.fornax.gateway.filter.MockHttpApiFilter;
 import zk.fornax.gateway.filter.RouteToRequestUrlFilter;
+import zk.fornax.gateway.filter.rewrite.body.DemoModifyRequestBodyFilter;
+import zk.fornax.gateway.filter.rewrite.body.DemoModifyResponseBodyFilter;
 import zk.fornax.gateway.locator.CompositeHttpApiLocator;
 import zk.fornax.gateway.locator.GatewayHttpApiLocator;
 import zk.fornax.gateway.locator.JsonFileHttpApiLocator;
@@ -52,6 +54,8 @@ public class FornaxGatewayServer extends AbstractHttpServer {
         httpWebHandler = new ChainBasedWebHandler(
             List.of(
                 exceptionHandleHttpApiFilter,
+                new DemoModifyRequestBodyFilter(),
+                new DemoModifyResponseBodyFilter(),
                 new RouteToRequestUrlFilter(),
                 new HttpRoutingFilter(httpClient)
             )
