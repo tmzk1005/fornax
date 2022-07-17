@@ -1,0 +1,17 @@
+[
+    {
+        "id": "api-1",
+        "version": "0.0.1",
+        "groupDomain": "www.fornax.com",
+        "httpMethods": ["GET"],
+        "path": "/fornax",
+        "backendType": "MOCK",
+        "mockBackend": {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": ["text/html"]
+            },
+            "body": "<h1 style='color: red'>Fornax-Gateway works fine!</h1>"
+        }
+    }
+]

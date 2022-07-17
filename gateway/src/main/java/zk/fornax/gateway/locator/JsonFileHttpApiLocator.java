@@ -3,6 +3,7 @@ package zk.fornax.gateway.locator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 
 import zk.fornax.common.httpapi.HttpApi;
+import zk.fornax.gateway.GatewayConfigurtion;
 import zk.fornax.http.core.HttpApiLocator;
 
 @Log4j2
@@ -33,10 +35,14 @@ public class JsonFileHttpApiLocator implements HttpApiLocator {
     }
 
     private static HttpApi[] loadHttpApisFromFile(String path) {
-        try (InputStream inputStream = Files.newInputStream(Paths.get(path));) {
-            return new ObjectMapper().readValue(Files.newInputStream(Paths.get(path)), HttpApi[].class);
+        Path jsonFilePath = Paths.get(path);
+        if (!jsonFilePath.isAbsolute()) {
+            jsonFilePath = GatewayConfigurtion.getFornaxHome().resolve(jsonFilePath);
+        }
+        try (InputStream inputStream = Files.newInputStream(jsonFilePath);) {
+            return new ObjectMapper().readValue(inputStream, HttpApi[].class);
         } catch (IOException ioException) {
-            log.error("Failed to load HttpApi instances from json file {}", path, ioException);
+            log.error("Failed to load HttpApi instances from json file {}", jsonFilePath, ioException);
             return new HttpApi[0];
         }
     }
