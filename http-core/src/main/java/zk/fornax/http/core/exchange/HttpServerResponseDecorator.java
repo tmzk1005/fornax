@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.cookie.Cookie;
+import lombok.Getter;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientResponse;
 import reactor.util.context.Context;
@@ -15,6 +16,7 @@ import reactor.util.context.ContextView;
 
 public class HttpServerResponseDecorator implements HttpClientResponse {
 
+    @Getter
     private HttpClientResponse decorator;
 
     public HttpServerResponseDecorator(HttpClientResponse decorator) {
@@ -100,6 +102,11 @@ public class HttpServerResponseDecorator implements HttpClientResponse {
     @Override
     public HttpVersion version() {
         return decorator.version();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [delegator=" + getDecorator() + "]";
     }
 
 }

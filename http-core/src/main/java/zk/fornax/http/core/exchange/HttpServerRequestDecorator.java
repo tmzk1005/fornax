@@ -12,6 +12,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.multipart.HttpData;
+import lombok.Getter;
 import reactor.core.publisher.Flux;
 import reactor.netty.ByteBufFlux;
 import reactor.netty.Connection;
@@ -20,6 +21,7 @@ import reactor.netty.http.server.HttpServerRequest;
 
 public class HttpServerRequestDecorator implements HttpServerRequest {
 
+    @Getter
     private final HttpServerRequest decorator;
 
     public HttpServerRequestDecorator(HttpServerRequest decorator) {
@@ -139,6 +141,11 @@ public class HttpServerRequestDecorator implements HttpServerRequest {
     @Override
     public HttpVersion version() {
         return decorator.version();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " [delegator=" + getDecorator() + "]";
     }
 
 }

@@ -41,4 +41,18 @@ public interface WebExchange {
 
     Mono<Principal> getPrincipal();
 
+    default Builder mutate() {
+        return new DefaultWebExchangeBuilder(this);
+    }
+
+    interface Builder {
+
+        Builder request(HttpServerRequest request);
+
+        Builder response(HttpServerResponse response);
+
+        WebExchange build();
+
+    }
+
 }
