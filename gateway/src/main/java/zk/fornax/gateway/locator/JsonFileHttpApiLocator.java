@@ -40,7 +40,9 @@ public class JsonFileHttpApiLocator implements HttpApiLocator {
             jsonFilePath = GatewayConfigurtion.getFornaxHome().resolve(jsonFilePath);
         }
         try (InputStream inputStream = Files.newInputStream(jsonFilePath);) {
-            return new ObjectMapper().readValue(inputStream, HttpApi[].class);
+            HttpApi[] httpApis = new ObjectMapper().readValue(inputStream, HttpApi[].class);
+            log.info("Loaded {} apis from file {}", httpApis.length, jsonFilePath);
+            return httpApis;
         } catch (IOException ioException) {
             log.error("Failed to load HttpApi instances from json file {}", jsonFilePath, ioException);
             return new HttpApi[0];

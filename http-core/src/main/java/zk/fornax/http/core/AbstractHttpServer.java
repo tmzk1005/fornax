@@ -75,7 +75,7 @@ public abstract class AbstractHttpServer implements Server {
         beforeStart().block(Duration.ofSeconds(10));
         started.set(true);
         isStartingUp.set(false);
-        log.info("{} Started.", this.getClass().getSimpleName());
+        startSucceed().block(Duration.ofSeconds(10));
         disposableServer.onDispose().block();
     }
 
@@ -106,6 +106,11 @@ public abstract class AbstractHttpServer implements Server {
 
     protected Mono<Void> beforeStart() {
         httpApiLocator.startup();
+        return Mono.empty();
+    }
+
+    protected Mono<Void> startSucceed() {
+        log.info("{} Started, http service listening on {}:{}", this.getClass().getSimpleName(), host, port);
         return Mono.empty();
     }
 

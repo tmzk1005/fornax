@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.extern.log4j.Log4j2;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import zk.fornax.common.httpapi.BackendType;
@@ -21,6 +23,7 @@ import zk.fornax.http.core.exchange.WebExchange;
 import zk.fornax.http.core.handler.ChainBasedWebHandler;
 import zk.fornax.http.core.handler.WebHandler;
 
+@Log4j2
 public class FornaxGatewayServer extends AbstractHttpServer {
 
     private final GatewayConfigurtion configurtion;
@@ -78,6 +81,17 @@ public class FornaxGatewayServer extends AbstractHttpServer {
         }
         httpApiLocators.add(new GatewayHttpApiLocator());
         this.httpApiLocator = new CompositeHttpApiLocator(httpApiLocators.toArray(new HttpApiLocator[0]));
+    }
+
+    @Override
+    protected Mono<Void> startSucceed() {
+        log.info(
+            "{} Started, FORNAX_HOME is {}, configuration file is {}, http service listening on {}:{}",
+            this.getClass().getSimpleName(),
+            GatewayConfigurtion.getFornaxHome(), configurtion.getConfFile(),
+            host, port
+        );
+        return Mono.empty();
     }
 
 }
