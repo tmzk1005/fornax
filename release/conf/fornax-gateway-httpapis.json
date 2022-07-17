@@ -13,5 +13,17 @@
             },
             "body": "<h1 style='color: red'>Fornax-Gateway works fine!</h1>"
         }
+    },
+    {
+        "id": "api-httpbin",
+        "groupDomain": "www.fornax.com",
+        "httpMethods": ["GET", "POST", "PUT", "DELETE"],
+        "path": "/httpbin",
+        "backendType": "HTTP",
+        "httpBackend": {
+            "host": "httpbin.org",
+            "port": 80,
+            "path": "/get"
+        }
     }
 ]
