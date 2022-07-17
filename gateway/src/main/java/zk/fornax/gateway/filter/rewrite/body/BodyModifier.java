@@ -16,6 +16,7 @@ public interface BodyModifier {
             byteBuf.readBytes(rawData);
         }
         byte[] convertedBytes = convert(rawData);
+        byteBuf.release();
         return Unpooled.wrappedBuffer(convertedBytes);
     }
 
