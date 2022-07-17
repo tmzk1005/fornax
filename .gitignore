@@ -30,3 +30,6 @@ buildSrc/qa/format/java.importorder
 
 # custom
 release/conf/*.classpath
+logs/
+release/logs/
+
