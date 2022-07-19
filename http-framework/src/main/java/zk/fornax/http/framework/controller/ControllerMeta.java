@@ -1,5 +1,6 @@
 package zk.fornax.http.framework.controller;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
@@ -28,9 +29,14 @@ public class ControllerMeta {
     @Getter
     private final Map<HttpMethod, Map<String, Method>> methods = new ConcurrentHashMap<>();
 
-    public ControllerMeta(Object controller) {
-        this.controller = controller;
-        this.controllerClass = controller.getClass();
+    public ControllerMeta(Class<?> controllerClass) {
+        this.controllerClass = controllerClass;
+        try {
+            Constructor<?> constructor = this.controllerClass.getConstructor();
+            this.controller = constructor.newInstance();
+        } catch (ReflectiveOperationException roe) {
+            throw new FornaxRuntimeException("Failed to create instance for class " + controllerClass.getName(), roe);
+        }
         this.name = parseName();
         parseRouteMethods();
     }

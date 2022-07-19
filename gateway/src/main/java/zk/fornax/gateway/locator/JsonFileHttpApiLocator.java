@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -12,18 +11,17 @@ import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 
 import zk.fornax.common.httpapi.HttpApi;
-import zk.fornax.gateway.GatewayConfigurtion;
 import zk.fornax.http.core.HttpApiLocator;
 
 @Log4j2
 public class JsonFileHttpApiLocator implements HttpApiLocator {
 
     @Getter
-    private final String jsonPath;
+    private final Path jsonPath;
 
     private final Flux<HttpApi> httpApis;
 
-    public JsonFileHttpApiLocator(String jsonPath) {
+    public JsonFileHttpApiLocator(Path jsonPath) {
         this.jsonPath = jsonPath;
         HttpApi[] httpApiArr = loadHttpApisFromFile(jsonPath);
         this.httpApis = Flux.fromArray(httpApiArr);
@@ -34,17 +32,13 @@ public class JsonFileHttpApiLocator implements HttpApiLocator {
         return httpApis;
     }
 
-    private static HttpApi[] loadHttpApisFromFile(String path) {
-        Path jsonFilePath = Paths.get(path);
-        if (!jsonFilePath.isAbsolute()) {
-            jsonFilePath = GatewayConfigurtion.getFornaxHome().resolve(jsonFilePath);
-        }
-        try (InputStream inputStream = Files.newInputStream(jsonFilePath);) {
+    private static HttpApi[] loadHttpApisFromFile(Path path) {
+        try (InputStream inputStream = Files.newInputStream(path);) {
             HttpApi[] httpApis = new ObjectMapper().readValue(inputStream, HttpApi[].class);
-            log.info("Loaded {} apis from file {}", httpApis.length, jsonFilePath);
+            log.info("Loaded {} apis from file {}", httpApis.length, path);
             return httpApis;
         } catch (IOException ioException) {
-            log.error("Failed to load HttpApi instances from json file {}", jsonFilePath, ioException);
+            log.error("Failed to load HttpApi instances from json file {}", path, ioException);
             return new HttpApi[0];
         }
     }

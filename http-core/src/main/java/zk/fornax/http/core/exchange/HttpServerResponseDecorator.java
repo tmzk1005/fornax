@@ -170,7 +170,7 @@ public class HttpServerResponseDecorator implements HttpServerResponse {
 
     @Override
     public <S> NettyOutbound sendUsing(
-        Callable<? extends S> sourceInput, BiFunction<? super Connection, ? super S, ?> mappedInput, 
+        Callable<? extends S> sourceInput, BiFunction<? super Connection, ? super S, ?> mappedInput,
         Consumer<? super S> sourceCleanup
     ) {
         return delegator.sendUsing(sourceInput, mappedInput, sourceCleanup);

@@ -28,6 +28,7 @@ ext {
     slf4jApiVersion = "1.7.36"
     log4j2Version = "2.17.2"
     picocliVersion = "4.6.3"
+    mongodbReactiveDriverVersion = '4.6.0'
 }
 
 dependencies {
@@ -38,6 +39,7 @@ dependencies {
     implementation platform("org.slf4j:slf4j-api:${slf4jApiVersion}")
     implementation platform("org.apache.logging.log4j:log4j-bom:${log4j2Version}")
     implementation platform("info.picocli:picocli:${picocliVersion}")
+    implementation platform("org.mongodb:mongodb-driver-reactivestreams:${mongodbReactiveDriverVersion}")
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.junit.jupiter:junit-jupiter'

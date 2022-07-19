@@ -1,5 +1,7 @@
 package zk.fornax.gateway;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -80,7 +82,11 @@ public class FornaxGatewayServer extends AbstractHttpServer {
         List<HttpApiLocator> httpApiLocators = new ArrayList<>();
         String apiJsonFile = configurtion.getApiJsonFile();
         if (Objects.nonNull(apiJsonFile)) {
-            JsonFileHttpApiLocator jsonFileHttpApiLocator = new JsonFileHttpApiLocator(configurtion.getApiJsonFile());
+            Path path = Paths.get(apiJsonFile);
+            if (!path.isAbsolute()) {
+                path = configurtion.getFornaxHome().resolve(path);
+            }
+            JsonFileHttpApiLocator jsonFileHttpApiLocator = new JsonFileHttpApiLocator(path);
             httpApiLocators.add(jsonFileHttpApiLocator);
         }
         httpApiLocators.add(new GatewayHttpApiLocator());
@@ -92,7 +98,7 @@ public class FornaxGatewayServer extends AbstractHttpServer {
         log.info(
             "{} Started, FORNAX_HOME is {}, configuration file is {}, http service listening on {}:{}",
             this.getClass().getSimpleName(),
-            GatewayConfigurtion.getFornaxHome(), configurtion.getConfFile(),
+            configurtion.getFornaxHome(), configurtion.getConfFile(),
             host, port
         );
         return Mono.empty();

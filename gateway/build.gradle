@@ -11,8 +11,5 @@ ext {
 }
 
 dependencies {
-    implementation project(path: ':common', configuration: 'default')
     implementation project(path: ':http-core', configuration: 'default')
-    implementation 'org.apache.logging.log4j:log4j-slf4j-impl'
-    implementation "info.picocli:picocli"
 }
