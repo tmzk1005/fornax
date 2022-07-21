@@ -1,7 +1,6 @@
 package zk.fornax.http.core;
 
 import java.time.Duration;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 
@@ -71,28 +70,30 @@ public abstract class AbstractHttpServer implements Server {
         if (!canStartup) {
             return;
         }
-        disposableServer = HttpServer.create().host(host).port(port).handle(new HttpHandler()).bindNow();
-        beforeStart().block(Duration.ofSeconds(10));
+        try {
+            disposableServer = HttpServer.create().host(host).port(port).handle(new HttpHandler()).bindNow();
+        } catch (Throwable throwable) {
+            isStartingUp.set(false);
+            log.error(this.getClass().getSimpleName() + " start failed.", throwable);
+            return;
+        }
+        beforeStart();
         started.set(true);
         isStartingUp.set(false);
-        startSucceed().block(Duration.ofSeconds(10));
+        startSucceed();
         disposableServer.onDispose().block();
     }
 
     @Override
     public void shutdown() {
         if (isStartingUp.get()) {
-            throw new IllegalStateException("{} is still starting up, can not shutdown!");
+            throw new IllegalStateException(this.getClass().getSimpleName() + "is still starting up, can not shutdown!");
         }
-        boolean canShuttingDown = isShuttingDown.compareAndSet(false, true);
+        boolean canShuttingDown = started.get() && isShuttingDown.compareAndSet(false, true);
         if (!canShuttingDown) {
             return;
         }
-        beforeStop().block(Duration.ofSeconds(10));
-        if (Objects.isNull(disposableServer)) {
-            log.warn("No need to stop a already stopped HttpServer.");
-            return;
-        }
+        beforeStop();
         try {
             disposableServer.disposeNow(Duration.ofSeconds(5));
         } catch (Exception exception) {
@@ -104,19 +105,16 @@ public abstract class AbstractHttpServer implements Server {
         log.info("{} Stopped.", this.getClass().getSimpleName());
     }
 
-    protected Mono<Void> beforeStart() {
+    protected void beforeStart() {
         httpApiLocator.startup();
-        return Mono.empty();
     }
 
-    protected Mono<Void> startSucceed() {
+    protected void startSucceed() {
         log.info("{} Started, http service listening on {}:{}", this.getClass().getSimpleName(), host, port);
-        return Mono.empty();
     }
 
-    protected Mono<Void> beforeStop() {
+    protected void beforeStop() {
         httpApiLocator.shutdown();
-        return Mono.empty();
     }
 
     protected abstract WebHandler getWebHandler(WebExchange webExchange);

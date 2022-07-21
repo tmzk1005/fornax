@@ -2,6 +2,8 @@ package zk.fornax.manager;
 
 import java.util.List;
 
+import lombok.Getter;
+
 import zk.fornax.http.core.AbstractHttpServer;
 import zk.fornax.http.core.HttpApiMatcherImpl;
 import zk.fornax.http.core.exchange.WebExchange;
@@ -12,12 +14,12 @@ import zk.fornax.http.framework.controller.ControllerHttpApiLocator;
 import zk.fornax.http.framework.filter.AuthenticationHttpApiFilter;
 import zk.fornax.http.framework.filter.ControllerMethodInvokeHttpFilter;
 import zk.fornax.http.framework.filter.ExceptionHandleHttpApiFilter;
+import zk.fornax.manager.dbinit.DatabaseInit;
 
 public class FornaxManagerServer extends AbstractHttpServer {
 
-    public static final String DEFAULT_HOST = "0.0.0.0";
-
-    public static final int DEFAULT_PORT = 8080;
+    @Getter
+    private final ManagerConfiguration configuration;
 
     private final WebHandler webHandler = new ChainBasedWebHandler(
         List.of(
@@ -27,19 +29,25 @@ public class FornaxManagerServer extends AbstractHttpServer {
         )
     );
 
-    public FornaxManagerServer() {
+    public FornaxManagerServer(ManagerConfiguration configuration) {
         super(
-            DEFAULT_HOST,
-            DEFAULT_PORT,
+            configuration.getServerHost(),
+            configuration.getServerPort(),
             new ControllerHttpApiLocator(FornaxManagerServer.class.getPackageName() + ".controller"),
             new HttpApiMatcherImpl(),
             new WebSessionManagerImpl()
         );
+        this.configuration = configuration;
     }
 
     @Override
     protected WebHandler getWebHandler(WebExchange webExchange) {
         return webHandler;
+    }
+
+    @Override
+    protected void beforeStart() {
+        DatabaseInit.init().subscribe();
     }
 
 }

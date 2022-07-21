@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.extern.log4j.Log4j2;
-import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import zk.fornax.common.httpapi.BackendType;
@@ -94,14 +93,13 @@ public class FornaxGatewayServer extends AbstractHttpServer {
     }
 
     @Override
-    protected Mono<Void> startSucceed() {
+    protected void startSucceed() {
         log.info(
             "{} Started, FORNAX_HOME is {}, configuration file is {}, http service listening on {}:{}",
             this.getClass().getSimpleName(),
             configurtion.getFornaxHome(), configurtion.getConfFile(),
             host, port
         );
-        return Mono.empty();
     }
 
 }

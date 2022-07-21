@@ -71,7 +71,7 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
     private Mono<Void> handleException(Throwable throwable, WebExchange webExchange, ControllerMeta controllerMeta, Method method) {
         if (throwable instanceof BizException bizException) {
             log.info(bizException.getMessage());
-            return handleBizException(throwable, webExchange);
+            return handleBizException(bizException, webExchange);
         } else {
             log.error("Failed to invoke controller method {}.{}", controllerMeta.getController().getClass().getName(), method.getName(), throwable);
             return fallbackHandleException(throwable, webExchange);
@@ -92,11 +92,9 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
         return ResponseHelper.sendJson(webExchange.getResponse(), httpResponseStatus, message);
     }
 
-    private Mono<Void> handleBizException(Throwable throwable, WebExchange webExchange) {
-        String message = throwable.getMessage();
-        ResponseStatus annotation = throwable.getClass().getAnnotation(ResponseStatus.class);
-        int code = Objects.nonNull(annotation) ? annotation.code() : -1;
-        return ResponseHelper.sendJson(webExchange.getResponse(), HttpResponseStatus.OK, code, message);
+    private Mono<Void> handleBizException(BizException bizException, WebExchange webExchange) {
+        String message = bizException.getMessage();
+        return ResponseHelper.sendJson(webExchange.getResponse(), HttpResponseStatus.OK, bizException.getCode(), message);
     }
 
     private static class InvokerContext {

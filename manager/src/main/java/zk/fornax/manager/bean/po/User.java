@@ -5,15 +5,24 @@ import java.time.Instant;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.BsonType;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonRepresentation;
 
 import zk.fornax.http.framework.security.Pbkdf2PasswordEncoder;
 import zk.fornax.manager.bean.Role;
 import zk.fornax.manager.bean.dto.UserDto;
+import zk.fornax.manager.db.mangodb.Document;
+import zk.fornax.manager.db.mangodb.Index;
 
 @Getter
 @Setter
-public class User extends BaseAuditablePo<UserDto> implements Principal {
+@Document
+@Index(name = "User-username-index", unique = true, def = "{\"username\": 1}")
+public class User extends BaseAuditableEntity<UserDto> implements Principal {
 
+    @BsonId
+    @BsonRepresentation(BsonType.OBJECT_ID)
     private String id;
 
     private String username;
@@ -34,7 +43,7 @@ public class User extends BaseAuditablePo<UserDto> implements Principal {
 
     @SuppressWarnings("unchecked")
     @Override
-    public User setFromDto(UserDto dto) {
+    public User initFromDto(UserDto dto) {
         this.id = null;
         this.username = dto.getUsername();
         this.nickname = dto.getNickname();

@@ -1,10 +1,20 @@
 package zk.fornax.http.framework.exception;
 
+import lombok.Getter;
+
 import zk.fornax.common.exception.FornaxRuntimeException;
 
-public abstract class BizException extends FornaxRuntimeException {
+public class BizException extends FornaxRuntimeException {
 
-    protected BizException(String message) {
+    @Getter
+    private int code = -1;
+
+    public BizException(int code, String message) {
+        super(message);
+        this.code = code;
+    }
+
+    public BizException(String message) {
         super(message);
     }
 

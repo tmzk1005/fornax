@@ -3,11 +3,11 @@ package zk.fornax.manager.bean.vo;
 import lombok.Getter;
 import lombok.Setter;
 
-import zk.fornax.manager.bean.po.ApiGroupPo;
+import zk.fornax.manager.bean.po.ApiGroupEntity;
 
 @Getter
 @Setter
-public class ApiGroupVo extends BaseAuditableVo<ApiGroupPo> {
+public class ApiGroupVo extends BaseAuditableVo<ApiGroupEntity> {
 
     private String id;
 
@@ -19,7 +19,7 @@ public class ApiGroupVo extends BaseAuditableVo<ApiGroupPo> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ApiGroupVo setFromPo(ApiGroupPo poInstance) {
+    public ApiGroupVo initFromPo(ApiGroupEntity poInstance) {
         this.id = null;
         this.name = poInstance.getName();
         this.address = poInstance.getAddress();

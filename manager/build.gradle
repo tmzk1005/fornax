@@ -6,7 +6,12 @@ base {
     archivesBaseName = 'fornax-manager'
 }
 
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
 dependencies {
     implementation project(path: ':http-framework', configuration: 'default')
     implementation 'org.mongodb:mongodb-driver-reactivestreams'
+    implementation 'org.mongodb:bson-record-codec'
 }

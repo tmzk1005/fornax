@@ -1,6 +1,8 @@
 package zk.fornax.manager;
 
+import lombok.Getter;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 import zk.fornax.http.core.ServerConfiguration;
 
@@ -24,5 +26,9 @@ public class ManagerConfiguration extends ServerConfiguration {
         this.confFile = DEFAULT_CONF_FILE;
         this.serverPort = DEFAULT_PORT;
     }
+
+    @Getter
+    @Option(names = "--mongodb.database", description = "Monogo db database name to store api manager information.")
+    private String mongoDbName = "fornax";
 
 }

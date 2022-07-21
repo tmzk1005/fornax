@@ -26,7 +26,7 @@ public class UserVo extends BaseAuditableVo<User> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public UserVo setFromPo(User user) {
+    public UserVo initFromPo(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.nickname = user.getNickname();
@@ -35,7 +35,7 @@ public class UserVo extends BaseAuditableVo<User> {
         this.phone = user.getPhone();
         this.role = user.getRole();
         copyAuditInfo(user);
-        return null;
+        return this;
     }
 
 }

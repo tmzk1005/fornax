@@ -7,7 +7,7 @@ import zk.fornax.manager.bean.dto.ApiGroupDto;
 
 @Getter
 @Setter
-public class ApiGroupPo extends BaseAuditablePo<ApiGroupDto> {
+public class ApiGroupEntity extends BaseAuditableEntity<ApiGroupDto> {
 
     private String id;
 
@@ -19,7 +19,7 @@ public class ApiGroupPo extends BaseAuditablePo<ApiGroupDto> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public ApiGroupPo setFromDto(ApiGroupDto dto) {
+    public ApiGroupEntity initFromDto(ApiGroupDto dto) {
         name = dto.getName();
         address = dto.getAddress();
         description = dto.getDescription();

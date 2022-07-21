@@ -6,6 +6,7 @@ import zk.fornax.common.httpapi.HttpMethod;
 import zk.fornax.http.framework.annotation.Controller;
 import zk.fornax.http.framework.annotation.RequestBody;
 import zk.fornax.http.framework.annotation.Route;
+import zk.fornax.http.framework.exception.BizException;
 import zk.fornax.manager.bean.dto.LoginDto;
 import zk.fornax.manager.bean.vo.UserVo;
 import zk.fornax.manager.service.ServiceFactory;
@@ -22,7 +23,8 @@ public class UserController {
 
     @Route(path = "_login", method = HttpMethod.POST)
     public Mono<UserVo> login(@RequestBody LoginDto loginDto) {
-        return userService.doLogin(loginDto).map(user -> new UserVo().setFromPo(user));
+        return userService.doLogin(loginDto).map(user -> new UserVo().initFromPo(user))
+            .switchIfEmpty(Mono.error(new BizException("登录失败!用户名或密码错误.")));
     }
 
 }
