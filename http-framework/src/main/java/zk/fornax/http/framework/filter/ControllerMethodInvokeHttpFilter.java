@@ -35,8 +35,8 @@ import zk.fornax.http.framework.annotation.Route;
 import zk.fornax.http.framework.controller.ControllerMeta;
 import zk.fornax.http.framework.controller.HttpApiControllerMetaHelper;
 import zk.fornax.http.framework.exception.BadRequestException;
-import zk.fornax.http.framework.exception.BizException;
 import zk.fornax.http.framework.exception.InternalServerError;
+import zk.fornax.http.framework.exception.RequestRelatedException;
 import zk.fornax.http.framework.utils.HttpPathNormalizer;
 import zk.fornax.http.framework.validate.ParameterValidator;
 import zk.fornax.http.framework.validate.PathVariable;
@@ -69,13 +69,18 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
     }
 
     private Mono<Void> handleException(Throwable throwable, WebExchange webExchange, ControllerMeta controllerMeta, Method method) {
-        if (throwable instanceof BizException bizException) {
-            log.info(bizException.getMessage());
-            return handleBizException(bizException, webExchange);
+        if (throwable instanceof RequestRelatedException rre) {
+            return handleRequestRelatedException(rre, webExchange);
         } else {
             log.error("Failed to invoke controller method {}.{}", controllerMeta.getController().getClass().getName(), method.getName(), throwable);
             return fallbackHandleException(throwable, webExchange);
         }
+    }
+
+    private Mono<Void> handleRequestRelatedException(RequestRelatedException exception, WebExchange webExchange) {
+        String message = exception.getMessage();
+        log.info("{} : {} : {}", exception.getClass().getSimpleName(), RequestRelatedException.requestInfo(webExchange.getRequest()), message);
+        return ResponseHelper.sendJson(webExchange.getResponse(), HttpResponseStatus.BAD_REQUEST, exception.getCode(), message);
     }
 
     private Mono<Void> fallbackHandleException(Throwable throwable, WebExchange webExchange) {
@@ -90,11 +95,6 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
             message = httpResponseStatus.reasonPhrase();
         }
         return ResponseHelper.sendJson(webExchange.getResponse(), httpResponseStatus, message);
-    }
-
-    private Mono<Void> handleBizException(BizException bizException, WebExchange webExchange) {
-        String message = bizException.getMessage();
-        return ResponseHelper.sendJson(webExchange.getResponse(), HttpResponseStatus.OK, bizException.getCode(), message);
     }
 
     private static class InvokerContext {

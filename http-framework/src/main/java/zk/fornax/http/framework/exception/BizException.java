@@ -1,17 +1,12 @@
 package zk.fornax.http.framework.exception;
 
-import lombok.Getter;
+import zk.fornax.http.framework.annotation.ResponseStatus;
 
-import zk.fornax.common.exception.FornaxRuntimeException;
-
-public class BizException extends FornaxRuntimeException {
-
-    @Getter
-    private int code = -1;
+@ResponseStatus(code = 200)
+public class BizException extends RequestRelatedException {
 
     public BizException(int code, String message) {
-        super(message);
-        this.code = code;
+        super(code, message);
     }
 
     public BizException(String message) {
