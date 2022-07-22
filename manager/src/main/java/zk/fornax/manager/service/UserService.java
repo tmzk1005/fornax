@@ -1,5 +1,6 @@
 package zk.fornax.manager.service;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import zk.fornax.manager.bean.Role;
@@ -14,5 +15,7 @@ public interface UserService {
 
     @HasRole(Role.SYSTEM_ADMIN)
     Mono<User> create(UserDto userDto);
+
+    Flux<User> listUsers(int pageNum, int pageSize);
 
 }

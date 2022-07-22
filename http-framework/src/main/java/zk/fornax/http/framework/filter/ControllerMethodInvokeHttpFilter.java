@@ -19,6 +19,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.ByteBufFlux;
 
+import zk.fornax.common.exception.FornaxRuntimeException;
 import zk.fornax.common.httpapi.HttpApi;
 import zk.fornax.common.httpapi.HttpMethod;
 import zk.fornax.common.rest.RestShuck;
@@ -203,9 +204,9 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
 
         private Object parseRequestParamValue(Parameter parameter, RequestParam requestParamAnn, Map<String, List<String>> requestParameters)
             throws BadRequestException {
-            String parameterName = requestParamAnn.value();
+            String parameterName = requestParamAnn.name();
             if (parameterName.equals("")) {
-                parameterName = parameter.getName();
+                throw new FornaxRuntimeException("RequestParam annotation has no name configured! " + parameter.toString());
             }
             List<String> value = requestParameters.get(parameterName);
             checkRequiredParameter(value, requestParamAnn.required(), "Parameter " + parameterName + " required.");
