@@ -28,4 +28,8 @@ public class ApiGroupVo extends BaseAuditableVo<ApiGroupEntity> {
         return this;
     }
 
+    public static ApiGroupVo fromPo(ApiGroupEntity apiGroupEntity) {
+        return new ApiGroupVo().initFromPo(apiGroupEntity);
+    }
+
 }
