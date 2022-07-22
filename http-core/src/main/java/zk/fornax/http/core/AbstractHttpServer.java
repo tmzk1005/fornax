@@ -72,9 +72,9 @@ public abstract class AbstractHttpServer implements Server {
         }
         try {
             disposableServer = HttpServer.create().host(host).port(port).handle(new HttpHandler()).bindNow();
-        } catch (Throwable throwable) {
+        } catch (Exception exception) {
             isStartingUp.set(false);
-            log.error(this.getClass().getSimpleName() + " start failed.", throwable);
+            log.error(this.getClass().getSimpleName() + " start failed.", exception);
             return;
         }
         beforeStart();
