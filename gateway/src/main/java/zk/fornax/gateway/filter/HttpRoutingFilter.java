@@ -33,7 +33,7 @@ public class HttpRoutingFilter implements HttpApiFilter {
     public Mono<Void> filter(WebExchange webExchange, HttpFilterChain chain) {
         final URI requestUrl = webExchange.getRequiredAttribute(WebExchangeHelper.GATEWAY_REQUEST_URL_ATTR);
         String scheme = requestUrl.getScheme();
-        if ((!HttpProtocol.HTTP.name().equalsIgnoreCase(scheme) && !HttpProtocol.HTTPS.name().equalsIgnoreCase(scheme))) {
+        if (!HttpProtocol.HTTP.name().equalsIgnoreCase(scheme) && !HttpProtocol.HTTPS.name().equalsIgnoreCase(scheme)) {
             return chain.filter(webExchange);
         }
         HttpServerRequest serverRequest = webExchange.getRequest();

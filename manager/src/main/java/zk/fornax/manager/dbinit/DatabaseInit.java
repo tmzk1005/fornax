@@ -26,6 +26,7 @@ public class DatabaseInit {
     private DatabaseInit() {
     }
 
+    @SuppressWarnings("PMD.CloseResource")
     public static Mono<Void> init() {
         MongoClient mongoClient = MongodbHelper.getMongoClient();
         String mongoDbName = FornaxManagerServerBootstrap.managerConfiguration.getMongoDbName();

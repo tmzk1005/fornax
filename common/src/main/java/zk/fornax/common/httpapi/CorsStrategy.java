@@ -1,6 +1,5 @@
 package zk.fornax.common.httpapi;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CorsStrategy implements Serializable {
+public class CorsStrategy {
 
     private String id;
 

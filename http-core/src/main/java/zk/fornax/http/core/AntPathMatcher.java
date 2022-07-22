@@ -228,8 +228,8 @@ public class AntPathMatcher implements PathMatcher {
         }
 
         private int findNextMatchTokenIndex(int nextDoubleStarIndex) {
-            int patternTokenCount = (nextDoubleStarIndex - patternIndexStart - 1);
-            int pathTokenCount = (pathIndexEnd - pathIndexStart + 1);
+            int patternTokenCount = nextDoubleStarIndex - patternIndexStart - 1;
+            int pathTokenCount = pathIndexEnd - pathIndexStart + 1;
             for (int i = 0; i <= pathTokenCount - patternTokenCount; i++) {
                 if (segmentsAllMatch(i, patternTokenCount)) {
                     return pathIndexStart + i;
@@ -257,7 +257,7 @@ public class AntPathMatcher implements PathMatcher {
 
         private boolean ifRestOfPatternIsStar() {
             if (patternIndexStart > patternIndexEnd) {
-                return (pattern.endsWith(pathSeparator) == path.endsWith(pathSeparator));
+                return pattern.endsWith(pathSeparator) == path.endsWith(pathSeparator);
             }
             if (
                 patternIndexStart == patternIndexEnd && patternTokens[patternIndexStart].equals("*") && path.endsWith(
@@ -281,7 +281,8 @@ public class AntPathMatcher implements PathMatcher {
                 pos += skipped;
                 skipped = skipSegment(path, pos, dir);
                 if (skipped < dir.length()) {
-                    return (skipped > 0 || (dir.length() > 0 && isWildcardChar(dir.charAt(0))));
+                    // Java中&&的优先级高于||
+                    return skipped > 0 || dir.length() > 0 && isWildcardChar(dir.charAt(0));
                 }
                 pos += skipped;
             }

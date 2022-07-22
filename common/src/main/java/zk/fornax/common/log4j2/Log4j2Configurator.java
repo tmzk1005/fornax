@@ -55,6 +55,7 @@ public final class Log4j2Configurator {
         configure(level, LAYOUT_PATTERN, logPath, appName, 4, 100, 100);
     }
 
+    @SuppressWarnings("PMD.CloseResource")
     public static void configure(
         Level level,
         String layoutPattern,
@@ -79,6 +80,7 @@ public final class Log4j2Configurator {
         loggerContext.updateLoggers();
     }
 
+    @SuppressWarnings("PMD.CloseResource")
     public static void configureCurrent(Level level, String layoutPattern) {
         LoggerContext loggerContext = LoggerContext.getContext(true);
         Configuration configuration = loggerContext.getConfiguration();

@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'pmd'
     id 'javaCodeFormatter'
     id 'eclipse'
 }
@@ -18,6 +19,13 @@ repositories {
 
 checkstyle {
     configFile = rootProject.file('buildSrc/qa/checkstyle/checkstyle.xml')
+}
+
+pmd {
+    consoleOutput = true
+    toolVersion = "6.47.0"
+    ruleSets = []
+    ruleSetFiles = files(rootProject.file('buildSrc/qa/pmd/pmd-java-rules.xml'))
 }
 
 ext {

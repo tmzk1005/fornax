@@ -13,7 +13,7 @@ public final class Hex {
         int j = 0;
         for (byte oneByte : bytes) {
             result[j++] = HEX_CHARS[(0xF0 & oneByte) >>> 4];
-            result[j++] = HEX_CHARS[(0x0F & oneByte)];
+            result[j++] = HEX_CHARS[0x0F & oneByte];
         }
         return result;
     }

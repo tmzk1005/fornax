@@ -37,8 +37,10 @@ public class ClassScanUtils {
                     classNames.set(index, pkgName + "." + classNames.get(index));
                 }
             } else if (RESOURCE_PROTOCOL_JAR.equals(protocol)) {
-                JarFile jarFile = ((JarURLConnection) resource.openConnection()).getJarFile();
-                classNames = getClassNamesFromJar(jarFile, pkgPath);
+                try (JarFile jarFile = ((JarURLConnection) resource.openConnection()).getJarFile()) {
+                    classNames = getClassNamesFromJar(jarFile, pkgPath);
+                }
+
             }
         }
         return classNames;

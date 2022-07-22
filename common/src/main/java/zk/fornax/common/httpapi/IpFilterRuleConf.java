@@ -1,6 +1,5 @@
 package zk.fornax.common.httpapi;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +10,7 @@ import zk.fornax.common.utils.IpUtil;
 
 @Data
 @NoArgsConstructor
-public class IpFilterRuleConf implements Serializable {
+public class IpFilterRuleConf {
 
     private IpFilterRuleType ipFilterRuleType = IpFilterRuleType.ACCEPT;
 
