@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import zk.fornax.http.framework.security.Pbkdf2PasswordEncoder;
 import zk.fornax.manager.FornaxManagerServerBootstrap;
 import zk.fornax.manager.bean.Role;
+import zk.fornax.manager.bean.po.ApiEntity;
 import zk.fornax.manager.bean.po.ApiGroupEntity;
 import zk.fornax.manager.bean.po.User;
 import zk.fornax.manager.db.mangodb.Index;
@@ -34,6 +35,7 @@ public class DatabaseInit {
         MongoDatabase database = mongoClient.getDatabase(mongoDbName);
         return initCollectionForEntity(User.class, database)
             .then(initCollectionForEntity(ApiGroupEntity.class, database))
+            .then(initCollectionForEntity(ApiEntity.class, database))
             .then(initFirstSystemAdminUser());
     }
 

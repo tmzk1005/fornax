@@ -17,7 +17,7 @@ import zk.fornax.manager.db.mangodb.Index;
 
 @Getter
 @Setter
-@Document
+@Document(collection = "User")
 @Index(name = "User-username-index", unique = true, def = "{\"username\": 1}")
 public class User extends BaseAuditableEntity<UserDto> implements Principal {
 

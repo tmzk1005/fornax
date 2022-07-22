@@ -12,7 +12,7 @@ import zk.fornax.manager.db.mangodb.Index;
 
 @Getter
 @Setter
-@Document
+@Document(collection = "ApiGroup")
 @Index(name = "ApiGroup-name-index", unique = true, def = "{\"name\": 1}")
 public class ApiGroupEntity extends BaseAuditableEntity<ApiGroupDto> {
 
