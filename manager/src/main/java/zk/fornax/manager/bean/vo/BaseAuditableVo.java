@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
+import zk.fornax.common.utils.JsonUtil;
 import zk.fornax.http.framework.Po;
 import zk.fornax.http.framework.Vo;
 import zk.fornax.manager.bean.po.Auditable;
@@ -20,8 +22,10 @@ public abstract class BaseAuditableVo<P extends Po<?>> implements Vo<P> {
 
     protected UserId lastModifiedBy;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = JsonUtil.DEFAULT_DATE_TIME_PATTERN)
     protected Instant createdDate;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = JsonUtil.DEFAULT_DATE_TIME_PATTERN)
     protected Instant lastModifiedDate;
 
     protected void copyAuditInfo(Auditable<User, Instant> auditable) {
