@@ -11,6 +11,7 @@ import zk.fornax.http.core.session.RequestContext;
 import zk.fornax.http.core.session.WebSession;
 import zk.fornax.http.framework.security.Pbkdf2PasswordEncoder;
 import zk.fornax.manager.bean.dto.LoginDto;
+import zk.fornax.manager.bean.dto.UserDto;
 import zk.fornax.manager.bean.po.User;
 import zk.fornax.manager.repository.RepositoryFactory;
 import zk.fornax.manager.repository.UserRepository;
@@ -28,6 +29,11 @@ public class UserServiceImpl implements UserService {
     public Mono<User> doLogin(LoginDto loginDto) {
         return userRepository.findOneByUsername(loginDto.getUsername())
             .flatMap(user -> passwordMatch(loginDto.getPassword(), user.getPassword()) ? setLoginStatus(user) : Mono.empty());
+    }
+
+    @Override
+    public Mono<User> create(UserDto userDto) {
+        return userRepository.insert(new User().initFromDto(userDto));
     }
 
     private static boolean passwordMatch(String dtoPassword, String hashedPassword) {

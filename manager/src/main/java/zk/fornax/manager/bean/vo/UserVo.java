@@ -38,4 +38,8 @@ public class UserVo extends BaseAuditableVo<User> {
         return this;
     }
 
+    public static UserVo fromPo(User user) {
+        return new UserVo().initFromPo(user);
+    }
+
 }

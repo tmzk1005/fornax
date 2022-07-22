@@ -16,9 +16,9 @@ import zk.fornax.manager.bean.po.User;
 @Setter
 public abstract class BaseAuditableVo<P extends Po<?>> implements Vo<P> {
 
-    protected SimpleUser createdBy;
+    protected UserId createdBy;
 
-    protected SimpleUser lastModifiedBy;
+    protected UserId lastModifiedBy;
 
     protected Instant createdDate;
 
@@ -27,30 +27,24 @@ public abstract class BaseAuditableVo<P extends Po<?>> implements Vo<P> {
     protected void copyAuditInfo(Auditable<User, Instant> auditable) {
         User rawCreatedBy = auditable.getCreatedBy();
         if (Objects.nonNull(rawCreatedBy) && Objects.nonNull(rawCreatedBy.getId())) {
-            setCreatedBy(SimpleUser.from(rawCreatedBy));
+            setCreatedBy(UserId.from(rawCreatedBy));
         }
         User rawLastModifiedBy = auditable.getLastModifiedBy();
         if (Objects.nonNull(rawLastModifiedBy) && Objects.nonNull(rawLastModifiedBy.getId())) {
-            setLastModifiedBy(SimpleUser.from(rawLastModifiedBy));
+            setLastModifiedBy(UserId.from(rawLastModifiedBy));
         }
         setCreatedDate(auditable.getCreatedDate());
         setLastModifiedDate(auditable.getLastModifiedDate());
     }
 
     @Getter
-    private static class SimpleUser implements Serializable {
+    private static class UserId implements Serializable {
 
         private String id;
 
-        private String username;
-
-        private String nickname;
-
-        public static SimpleUser from(User user) {
-            SimpleUser simpleUser = new SimpleUser();
+        public static UserId from(User user) {
+            UserId simpleUser = new UserId();
             simpleUser.id = user.getId();
-            simpleUser.username = user.getUsername();
-            simpleUser.nickname = user.getNickname();
             return simpleUser;
         }
 
