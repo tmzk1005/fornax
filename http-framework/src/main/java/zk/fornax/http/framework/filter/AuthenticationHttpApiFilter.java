@@ -35,7 +35,7 @@ public class AuthenticationHttpApiFilter implements HttpApiFilter {
         if (noNeedLogin(webExchange.getRequest())) {
             return chain.filter(webExchange);
         }
-        return ResponseHelper.sendJson(webExchange.getResponse(), HttpResponseStatus.UNAUTHORIZED);
+        return ResponseHelper.sendJson(webExchange.getResponse(), HttpResponseStatus.UNAUTHORIZED, "未登录!");
     }
 
     private boolean noNeedLogin(final HttpServerRequest request) {

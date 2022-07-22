@@ -80,7 +80,9 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
     private Mono<Void> handleRequestRelatedException(RequestRelatedException exception, WebExchange webExchange) {
         String message = exception.getMessage();
         log.info("{} : {} : {}", exception.getClass().getSimpleName(), RequestRelatedException.requestInfo(webExchange.getRequest()), message);
-        return ResponseHelper.sendJson(webExchange.getResponse(), HttpResponseStatus.BAD_REQUEST, exception.getCode(), message);
+        ResponseStatus annotation = exception.getClass().getAnnotation(ResponseStatus.class);
+        HttpResponseStatus httpResponseStatus = Objects.nonNull(annotation) ? HttpResponseStatus.valueOf(annotation.code()) : HttpResponseStatus.OK;
+        return ResponseHelper.sendJson(webExchange.getResponse(), httpResponseStatus, exception.getCode(), message);
     }
 
     private Mono<Void> fallbackHandleException(Throwable throwable, WebExchange webExchange) {

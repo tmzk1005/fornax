@@ -39,7 +39,7 @@ public class RoleChecker {
     public static Mono<Boolean> isRoleOrAccessDenied(Role... roles) {
         return isRole(roles).map(matched -> {
             if (Boolean.FALSE.equals(matched)) {
-                throw new AccessDeniedException("No permissions!");
+                throw new AccessDeniedException("没有访问权限!");
             }
             return matched;
         });
