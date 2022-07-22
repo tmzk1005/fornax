@@ -13,7 +13,6 @@ import reactor.netty.http.client.HttpClientResponse;
 import reactor.netty.http.server.HttpServerRequest;
 import reactor.netty.http.server.HttpServerResponse;
 
-import zk.fornax.common.httpapi.HttpApi;
 import zk.fornax.common.httpapi.HttpProtocol;
 import zk.fornax.gateway.exception.ResponseStatusException;
 import zk.fornax.gateway.util.WebExchangeHelper;
@@ -39,7 +38,7 @@ public class HttpRoutingFilter implements HttpApiFilter {
         }
         HttpServerRequest serverRequest = webExchange.getRequest();
         final String url = requestUrl.toASCIIString();
-        Flux<HttpClientResponse> responseFlux = getHttpClient(webExchange.getHttpApi())
+        Flux<HttpClientResponse> responseFlux = httpClient
             .headers(headers -> {
                 headers.add(serverRequest.requestHeaders());
                 headers.remove(HttpHeaderNames.HOST);
@@ -71,11 +70,6 @@ public class HttpRoutingFilter implements HttpApiFilter {
                 );
         }
         return responseFlux.then(chain.filter(webExchange));
-    }
-
-    protected HttpClient getHttpClient(HttpApi httpApi) {
-        // TODO: 根据httpApi的超时配置来设置httpClient
-        return httpClient;
     }
 
 }
