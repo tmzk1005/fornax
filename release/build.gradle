@@ -13,6 +13,7 @@ def createJarNameListForProject(String projectName) {
 tasks.create(name: "releaseTarGz", type: Tar) {
     dependsOn project(":gateway").tasks.getByName("build")
     dependsOn project(":manager").tasks.getByName("build")
+    dependsOn project(":manager-web-ui").tasks.getByName("build")
 
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
 
@@ -30,6 +31,7 @@ tasks.create(name: "releaseTarGz", type: Tar) {
     into releaseName
     from { 'bin' } { into 'bin/' fileMode 0755 }
     from { 'conf' } { into 'conf/' fileMode 0644 }
+    from { 'static' } { into 'static/' fileMode 0644 }
     from { 
         [
             project(":gateway").configurations.compileClasspath,

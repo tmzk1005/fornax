@@ -14,16 +14,8 @@ task prepareBuild() {
     mkdir 'build'
 }
 
-task distTar(type: Tar) {
-    dependsOn "npm_run_build"
-    destinationDirectory = file('build')
-    archiveBaseName = fornaxArchiveBaseName
-    archiveVersion =  project.getRootProject().version
-    compression = Compression.GZIP
+task build(type: Copy) {
+    dependsOn 'prepareBuild', 'npm_run_build'
     from 'dist'
-    into fornaxArchiveBaseName + '-' + project.getRootProject().version
-}
-
-task build {
-    dependsOn 'prepareBuild', 'distTar'
+    into project(":release").file("static")
 }
