@@ -1,0 +1,29 @@
+plugins {
+    id "com.github.node-gradle.node" version "3.2.1"
+}
+
+var fornaxArchiveBaseName = "fornax-web-ui"
+
+task clean {
+    delete "dist"
+    delete 'build'
+}
+
+task prepareBuild() {
+    delete 'build'
+    mkdir 'build'
+}
+
+task distTar(type: Tar) {
+    dependsOn "npm_run_build"
+    destinationDirectory = file('build')
+    archiveBaseName = fornaxArchiveBaseName
+    archiveVersion =  project.getRootProject().version
+    compression = Compression.GZIP
+    from 'dist'
+    into fornaxArchiveBaseName + '-' + project.getRootProject().version
+}
+
+task build {
+    dependsOn 'prepareBuild', 'distTar'
+}
