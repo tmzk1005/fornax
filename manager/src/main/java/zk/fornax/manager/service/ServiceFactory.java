@@ -14,8 +14,8 @@ import reactor.core.publisher.Mono;
 
 import zk.fornax.common.utils.ObjectUtils;
 import zk.fornax.manager.bean.Role;
+import zk.fornax.manager.security.ContextHelper;
 import zk.fornax.manager.security.HasRole;
-import zk.fornax.manager.security.RoleChecker;
 import zk.fornax.manager.service.impl.ApiGroupServiceImpl;
 import zk.fornax.manager.service.impl.ApiServiceImpl;
 import zk.fornax.manager.service.impl.AppServiceImpl;
@@ -68,7 +68,7 @@ public class ServiceFactory {
             if (ObjectUtils.isEmpty(needRoles)) {
                 return method.invoke(serviceNormalInstance, args);
             }
-            final Mono<Boolean> passed = RoleChecker.isRoleOrAccessDenied(needRoles);
+            final Mono<Boolean> passed = ContextHelper.isRoleOrAccessDenied(needRoles);
             final Class<?> returnType = method.getReturnType();
             if (Mono.class.isAssignableFrom(returnType)) {
                 return passed.then((Mono<?>) method.invoke(serviceNormalInstance, args));

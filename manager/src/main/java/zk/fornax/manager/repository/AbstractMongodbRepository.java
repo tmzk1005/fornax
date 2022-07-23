@@ -18,7 +18,7 @@ import zk.fornax.manager.bean.po.User;
 import zk.fornax.manager.db.mangodb.MongoFilter;
 import zk.fornax.manager.db.mangodb.MongodbHelper;
 import zk.fornax.manager.db.mangodb.MongodbOperations;
-import zk.fornax.manager.security.RoleChecker;
+import zk.fornax.manager.security.ContextHelper;
 
 @Log4j2
 public abstract class AbstractMongodbRepository<E extends AuditableEntity<User, Instant, ?>> {
@@ -42,7 +42,7 @@ public abstract class AbstractMongodbRepository<E extends AuditableEntity<User, 
         Instant now = Instant.now();
         entity.setCreatedDate(now);
         entity.setLastModifiedDate(now);
-        return RoleChecker.getCurrentUser().flatMap(user -> {
+        return ContextHelper.getCurrentUser().flatMap(user -> {
             entity.setCreatedBy(user);
             entity.setLastModifiedBy(user);
             return MongodbOperations.insert(mongoCollection, entity);
@@ -52,7 +52,7 @@ public abstract class AbstractMongodbRepository<E extends AuditableEntity<User, 
     public Mono<E> save(E entity) {
         Instant now = Instant.now();
         entity.setLastModifiedDate(now);
-        return RoleChecker.getCurrentUser().flatMap(user -> {
+        return ContextHelper.getCurrentUser().flatMap(user -> {
             entity.setLastModifiedBy(user);
             return MongodbOperations.save(mongoCollection, entity);
         }).switchIfEmpty(MongodbOperations.save(mongoCollection, entity));
@@ -77,7 +77,7 @@ public abstract class AbstractMongodbRepository<E extends AuditableEntity<User, 
     }
 
     public Mono<E> findOneByIdAndFilterByOwner(String id) {
-        return RoleChecker.getCurrentUser().flatMap(user -> {
+        return ContextHelper.getCurrentUser().flatMap(user -> {
             MongoFilter filter = MongoFilter.byId(id);
             if (user.getRole().equals(Role.NORMAL_USER)) {
                 filter = filter.andByCreatorId(user.getId());
@@ -87,7 +87,7 @@ public abstract class AbstractMongodbRepository<E extends AuditableEntity<User, 
     }
 
     private Mono<MongoFilter> ownerFilter(final MongoFilter mongoFilter) {
-        return RoleChecker.getCurrentUser().map(user -> {
+        return ContextHelper.getCurrentUser().map(user -> {
             if (user.getRole().equals(Role.NORMAL_USER)) {
                 mongoFilter.andByCreatorId(user.getId());
             }

@@ -10,15 +10,18 @@ import zk.fornax.http.framework.exception.AccessDeniedException;
 import zk.fornax.manager.bean.Role;
 import zk.fornax.manager.bean.po.User;
 
-public class RoleChecker {
+public class ContextHelper {
 
-    private RoleChecker() {
+    private ContextHelper() {
+    }
+
+    public static Mono<WebSession> getSession() {
+        return ReactiveRequestContextHolder.getContext()
+            .flatMap(requestContext -> requestContext.getWebExchange().getSession());
     }
 
     public static Mono<User> getCurrentUser() {
-        return ReactiveRequestContextHolder.getContext()
-            .flatMap(requestContext -> requestContext.getWebExchange().getSession())
-            .map(session -> session.getAttribute(WebSession.ATTR_NAME_PRINCIPAL));
+        return getSession().map(session -> session.getAttribute(WebSession.ATTR_NAME_PRINCIPAL));
     }
 
     public static Mono<Boolean> isRole(Role... roles) {

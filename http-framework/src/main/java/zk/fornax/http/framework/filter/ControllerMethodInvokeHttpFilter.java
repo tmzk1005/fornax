@@ -281,7 +281,7 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
                         throw new InternalServerError(exception);
                     }
                     return ResponseHelper.sendJson(webExchange.getResponse(), jsonContent);
-                }).switchIfEmpty(ResponseHelper.sendJson(webExchange.getResponse(), HttpResponseStatus.OK));
+                }).switchIfEmpty(ResponseHelper.sendOk(webExchange.getResponse(), HttpResponseStatus.OK));
             } else if (finalInvokeResult instanceof CharSequence charSequence) {
                 return ResponseHelper.send(webExchange.getResponse(), HttpResponseStatus.OK, HttpHeaderValues.TEXT_PLAIN.toString(), charSequence.toString());
             } else {

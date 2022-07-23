@@ -4,6 +4,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import zk.fornax.common.httpapi.HttpMethod;
+import zk.fornax.http.core.session.WebSession;
 import zk.fornax.http.framework.annotation.Controller;
 import zk.fornax.http.framework.annotation.RequestBody;
 import zk.fornax.http.framework.annotation.RequestParam;
@@ -14,7 +15,7 @@ import zk.fornax.http.framework.validate.PageSize;
 import zk.fornax.manager.bean.dto.LoginDto;
 import zk.fornax.manager.bean.dto.UserDto;
 import zk.fornax.manager.bean.vo.UserVo;
-import zk.fornax.manager.security.RoleChecker;
+import zk.fornax.manager.security.ContextHelper;
 import zk.fornax.manager.service.ServiceFactory;
 import zk.fornax.manager.service.UserService;
 
@@ -33,6 +34,11 @@ public class UserController {
             .switchIfEmpty(Mono.error(new BizException("登录失败!用户名或密码错误.")));
     }
 
+    @Route(path = "_logout", method = HttpMethod.POST)
+    public Mono<Void> logout() {
+        return ContextHelper.getSession().flatMap(WebSession::invalidate);
+    }
+
     @Route(method = HttpMethod.POST)
     public Mono<UserVo> create(@RequestBody UserDto userDto) {
         return userService.create(userDto).map(UserVo::fromPo);
@@ -48,7 +54,7 @@ public class UserController {
 
     @Route(path = "me")
     public Mono<UserVo> me() {
-        return RoleChecker.getCurrentUser().map(UserVo::fromPo);
+        return ContextHelper.getCurrentUser().map(UserVo::fromPo);
     }
 
 }
