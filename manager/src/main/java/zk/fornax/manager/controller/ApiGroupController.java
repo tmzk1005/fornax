@@ -1,5 +1,6 @@
 package zk.fornax.manager.controller;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import zk.fornax.common.httpapi.HttpMethod;
@@ -31,6 +32,11 @@ public class ApiGroupController {
         @PageSize @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize
     ) {
         return apiGroupService.listApiGroups(pageNum, pageSize).map(page -> page.map(ApiGroupVo::fromPo));
+    }
+
+    @Route(path = "_search")
+    public Flux<ApiGroupVo> searchApiGroups(@RequestParam(name = "text", required = false, defaultValue = "") String text) {
+        return apiGroupService.searchApiGroups(text).map(ApiGroupVo::fromPo);
     }
 
 }

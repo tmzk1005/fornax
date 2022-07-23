@@ -1,5 +1,6 @@
 package zk.fornax.manager.service;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import zk.fornax.manager.bean.PageData;
@@ -14,5 +15,7 @@ public interface ApiGroupService {
     Mono<ApiGroupEntity> create(ApiGroupDto apiGroupDto);
 
     Mono<PageData<ApiGroupEntity>> listApiGroups(int pageNum, int pageSize);
+
+    Flux<ApiGroupEntity> searchApiGroups(String text);
 
 }

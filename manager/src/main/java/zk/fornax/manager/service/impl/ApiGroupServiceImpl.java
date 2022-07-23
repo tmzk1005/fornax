@@ -1,7 +1,10 @@
 package zk.fornax.manager.service.impl;
 
+import com.mongodb.client.model.Filters;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import zk.fornax.common.utils.ObjectUtils;
 import zk.fornax.manager.bean.PageData;
 import zk.fornax.manager.bean.dto.ApiGroupDto;
 import zk.fornax.manager.bean.po.ApiGroupEntity;
@@ -22,6 +25,17 @@ public class ApiGroupServiceImpl implements ApiGroupService {
     @Override
     public Mono<PageData<ApiGroupEntity>> listApiGroups(int pageNum, int pageSize) {
         return apiGroupRepository.pageFindAndFilterByOwner(MongoFilter.empty().page(pageNum, pageSize));
+    }
+
+    @Override
+    public Flux<ApiGroupEntity> searchApiGroups(String text) {
+        MongoFilter mongoFilter;
+        if (ObjectUtils.isEmpty(text)) {
+            mongoFilter = MongoFilter.empty();
+        } else {
+            mongoFilter = MongoFilter.filter(Filters.regex("name", text));
+        }
+        return apiGroupRepository.find(mongoFilter);
     }
 
 }

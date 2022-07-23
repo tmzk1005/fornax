@@ -20,7 +20,7 @@ public class ApiGroupVo extends BaseAuditableVo<ApiGroupEntity> {
     @SuppressWarnings("unchecked")
     @Override
     public ApiGroupVo initFromPo(ApiGroupEntity poInstance) {
-        this.id = null;
+        this.id = poInstance.getId();
         this.name = poInstance.getName();
         this.address = poInstance.getAddress();
         this.description = poInstance.getAddress();
