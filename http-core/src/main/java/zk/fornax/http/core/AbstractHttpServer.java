@@ -1,9 +1,14 @@
 package zk.fornax.http.core;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
@@ -16,6 +21,7 @@ import zk.fornax.common.exception.FornaxRuntimeException;
 import zk.fornax.http.core.exchange.WebExchange;
 import zk.fornax.http.core.exchange.WebExchangeImpl;
 import zk.fornax.http.core.handler.WebHandler;
+import zk.fornax.http.core.mime.MimeTypesHelper;
 import zk.fornax.http.core.session.ReactiveRequestContextHolder;
 import zk.fornax.http.core.session.RequestContext;
 import zk.fornax.http.core.session.RequestContextImpl;
@@ -23,6 +29,10 @@ import zk.fornax.http.core.session.WebSessionManager;
 
 @Log4j2
 public abstract class AbstractHttpServer implements Server {
+
+    private static final String STATIC_RESOURCE_PATH_PREFIX = "static/";
+
+    private static final int PATH_START_INDEX = STATIC_RESOURCE_PATH_PREFIX.length();
 
     protected final String host;
 
@@ -41,6 +51,8 @@ public abstract class AbstractHttpServer implements Server {
     protected final AtomicBoolean isShuttingDown = new AtomicBoolean(false);
 
     protected final AtomicBoolean started = new AtomicBoolean(false);
+
+    protected Path staticResourceRootPath;
 
     protected AbstractHttpServer(String host, int port) {
         this.host = host;
@@ -70,8 +82,9 @@ public abstract class AbstractHttpServer implements Server {
         if (!canStartup) {
             return;
         }
+        HttpHandler httpHandler = Objects.nonNull(staticResourceRootPath) ? new HttpHandlerSupportStatic() : new HttpHandler();
         try {
-            disposableServer = HttpServer.create().host(host).port(port).handle(new HttpHandler()).bindNow();
+            disposableServer = HttpServer.create().host(host).port(port).handle(httpHandler).bindNow();
         } catch (Exception exception) {
             isStartingUp.set(false);
             log.error(this.getClass().getSimpleName() + " start failed.", exception);
@@ -149,6 +162,41 @@ public abstract class AbstractHttpServer implements Server {
                         return ResponseHelper.sendJson(response, HttpResponseStatus.INTERNAL_SERVER_ERROR);
                     }
                 });
+        }
+
+    }
+
+    private class HttpHandlerSupportStatic extends HttpHandler {
+
+        @Override
+        public Mono<Void> apply(HttpServerRequest request, HttpServerResponse response) {
+            String path = request.path();
+            if (path.startsWith(STATIC_RESOURCE_PATH_PREFIX)) {
+                return serveStaticResource(path, response);
+            } else {
+                return super.apply(request, response);
+            }
+        }
+
+        public Mono<Void> serveStaticResource(String path, HttpServerResponse response) {
+            Path resourcePath = staticResourceRootPath.resolve(path.substring(PATH_START_INDEX)).toAbsolutePath().normalize();
+            if (!resourcePath.startsWith(staticResourceRootPath) || Files.notExists(resourcePath)) {
+                return response.sendNotFound();
+            }
+            File file = resourcePath.toFile();
+            if (!file.isFile()) {
+                return response.sendNotFound();
+            }
+
+            long contentLength = file.length();
+            response.header(HttpHeaderNames.CONTENT_LENGTH, contentLength + "");
+
+            String suffix = path.substring(path.lastIndexOf(".") + 1);
+            String contentType = MimeTypesHelper.getContentTypeBySuffix(suffix);
+            if (Objects.nonNull(contentType)) {
+                response.header(HttpHeaderNames.CONTENT_TYPE, contentType);
+            }
+            return Mono.from(response.sendFile(resourcePath));
         }
 
     }
