@@ -61,7 +61,7 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
         }
         return new InvokerContext(controllerMeta.getController(), method, webExchange, requestPathWithOutPrefix).invoke()
             .onErrorResume(throwable -> handleException(throwable, webExchange, controllerMeta, method))
-            .then(chain.filter(webExchange));
+            .then(Mono.defer(() -> webExchange.getResponse().hasSentHeaders() ? Mono.empty() : chain.filter(webExchange)));
     }
 
     private Mono<Void> sendNotFound(WebExchange webExchange) {
@@ -180,7 +180,7 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
             }
         }
 
-        private Object transformPathVariableValue(Parameter parameter, String rawValue) throws BadRequestException {
+        private Object transformPathVariableValue(Parameter parameter, String rawValue) {
             try {
                 return transform(parameter.getType(), rawValue);
             } catch (NumberFormatException numberFormatException) {
@@ -266,22 +266,24 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
             }
         }
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
         private Mono<Void> handleInvokeResult(Object invokeResult) {
             Object finalInvokeResult = invokeResult;
             if (finalInvokeResult instanceof Flux<?> flux) {
                 finalInvokeResult = flux.collectList();
             }
-            if (finalInvokeResult instanceof Mono<?> mono) {
-                // 需要把Mono里的东西序列化为json
-                return mono.flatMap(data -> {
-                    String jsonContent;
-                    try {
-                        jsonContent = JsonUtil.toJson(RestShuck.success(data));
-                    } catch (JsonProcessingException exception) {
-                        throw new InternalServerError(exception);
-                    }
-                    return ResponseHelper.sendJson(webExchange.getResponse(), jsonContent);
-                }).switchIfEmpty(ResponseHelper.sendOk(webExchange.getResponse(), HttpResponseStatus.OK));
+            if (finalInvokeResult instanceof Mono mono) {
+                // 需要把Mono里的东西序列化为json， 但是这个mono在controller方法返回了Mono<Void>时是empty的，这种情况返回一个RestShuck结构
+                return mono.switchIfEmpty(ResponseHelper.sendOk(webExchange.getResponse(), HttpResponseStatus.OK))
+                    .flatMap(data -> {
+                        String jsonContent;
+                        try {
+                            jsonContent = JsonUtil.toJson(RestShuck.success(data));
+                        } catch (JsonProcessingException exception) {
+                            throw new InternalServerError(exception);
+                        }
+                        return ResponseHelper.sendJson(webExchange.getResponse(), jsonContent);
+                    });
             } else if (finalInvokeResult instanceof CharSequence charSequence) {
                 return ResponseHelper.send(webExchange.getResponse(), HttpResponseStatus.OK, HttpHeaderValues.TEXT_PLAIN.toString(), charSequence.toString());
             } else {
