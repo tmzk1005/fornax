@@ -32,4 +32,5 @@ buildSrc/qa/format/java.importorder
 release/conf/*.classpath
 logs/
 release/logs/
+release/static/
 
