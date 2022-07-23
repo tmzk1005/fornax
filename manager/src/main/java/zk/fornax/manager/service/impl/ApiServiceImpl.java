@@ -1,8 +1,8 @@
 package zk.fornax.manager.service.impl;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import zk.fornax.manager.bean.PageData;
 import zk.fornax.manager.bean.dto.ApiDto;
 import zk.fornax.manager.bean.po.ApiEntity;
 import zk.fornax.manager.db.mangodb.MongoFilter;
@@ -32,8 +32,8 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public Flux<ApiEntity> listApis(int pageNum, int pageSize) {
-        return apiRepository.findAndFilterByOwner(MongoFilter.empty().page(pageNum, pageSize));
+    public Mono<PageData<ApiEntity>> listApis(int pageNum, int pageSize) {
+        return apiRepository.pageFindAndFilterByOwner(MongoFilter.empty().page(pageNum, pageSize));
     }
 
 }
