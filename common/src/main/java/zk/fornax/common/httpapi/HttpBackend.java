@@ -15,6 +15,10 @@ public class HttpBackend {
 
     private int port;
 
+    private String address;
+
+    private HttpMethod httpMethod;
+
     private String path;
 
     private RequestMapType requestMapType = RequestMapType.NONE;
