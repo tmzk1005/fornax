@@ -20,7 +20,6 @@ public class ApiGroupController {
 
     private final ApiGroupService apiGroupService = ServiceFactory.get(ApiGroupService.class);
 
-
     @Route(method = HttpMethod.POST)
     public Mono<ApiGroupVo> createApiGroup(@RequestBody ApiGroupDto apiGroupDto) {
         return apiGroupService.create(apiGroupDto).map(ApiGroupVo::fromPo);
@@ -28,8 +27,8 @@ public class ApiGroupController {
 
     @Route
     public Flux<ApiGroupVo> listApiGroups(
-        @PageNum @RequestParam(name= "pageNum", required = false, defaultValue = "1") int pageNum,
-        @PageSize @RequestParam(name= "pageSize", required = false, defaultValue = "10") int pageSize
+        @PageNum @RequestParam(name = "pageNum", required = false, defaultValue = "1") int pageNum,
+        @PageSize @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize
     ) {
         return apiGroupService.listApiGroups(pageNum, pageSize).map(ApiGroupVo::fromPo);
     }

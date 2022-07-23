@@ -9,5 +9,5 @@ public class ApiRepository extends AbstractMongodbRepository<ApiEntity> {
     public ApiRepository(MongoClient mongoClient, String databaseName, Class<ApiEntity> entityClass) {
         super(mongoClient, databaseName, entityClass);
     }
-    
+
 }

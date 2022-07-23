@@ -79,5 +79,5 @@ public class ApiEntity extends BaseAuditableEntity<ApiDto> {
         this.httpBackend = dto.getHttpBackend();
         return this;
     }
-    
+
 }

@@ -5,10 +5,10 @@ import lombok.Getter;
 public class Page {
 
     @Getter
-    private int pageNum = 1;
+    protected int pageNum = 1;
 
     @Getter
-    private int pageSize = 10;
+    protected int pageSize = 10;
 
     public Page() {
     }

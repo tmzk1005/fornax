@@ -18,6 +18,7 @@ import zk.fornax.manager.security.HasRole;
 import zk.fornax.manager.security.RoleChecker;
 import zk.fornax.manager.service.impl.ApiGroupServiceImpl;
 import zk.fornax.manager.service.impl.ApiServiceImpl;
+import zk.fornax.manager.service.impl.AppServiceImpl;
 import zk.fornax.manager.service.impl.UserServiceImpl;
 
 @Log4j2
@@ -29,6 +30,7 @@ public class ServiceFactory {
         SERVICE_MAP.put(UserService.class, new SecurityProxy<>(UserService.class, new UserServiceImpl()).getProxy());
         SERVICE_MAP.put(ApiGroupService.class, new SecurityProxy<>(ApiGroupService.class, new ApiGroupServiceImpl()).getProxy());
         SERVICE_MAP.put(ApiService.class, new SecurityProxy<>(ApiService.class, new ApiServiceImpl()).getProxy());
+        SERVICE_MAP.put(AppService.class, new SecurityProxy<>(AppService.class, new AppServiceImpl()).getProxy());
     }
 
     private ServiceFactory() {

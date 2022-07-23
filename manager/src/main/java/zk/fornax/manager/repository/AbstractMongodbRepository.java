@@ -1,15 +1,17 @@
 package zk.fornax.manager.repository;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import lombok.extern.log4j.Log4j2;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import zk.fornax.manager.bean.Page;
+import zk.fornax.manager.bean.PageData;
 import zk.fornax.manager.bean.Role;
 import zk.fornax.manager.bean.po.AuditableEntity;
 import zk.fornax.manager.bean.po.User;
@@ -84,22 +86,37 @@ public abstract class AbstractMongodbRepository<E extends AuditableEntity<User, 
         }).switchIfEmpty(Mono.empty());
     }
 
-    public Flux<E> findAndFilterByOwner(MongoFilter mongoFilter) {
-        return RoleChecker.getCurrentUser().flatMapMany(user -> {
-            MongoFilter filter = mongoFilter;
+    private Mono<MongoFilter> ownerFilter(final MongoFilter mongoFilter) {
+        return RoleChecker.getCurrentUser().map(user -> {
             if (user.getRole().equals(Role.NORMAL_USER)) {
-                filter = filter.andByCreatorId(user.getId());
+                mongoFilter.andByCreatorId(user.getId());
             }
-            return find(filter);
-        }).switchIfEmpty(Flux.empty());
+            return mongoFilter;
+        });
     }
 
-    public Mono<Long> count(Bson filter) {
-        return MongodbOperations.count(mongoCollection, filter);
+    public Flux<E> findAndFilterByOwner(MongoFilter mongoFilter) {
+        return ownerFilter(mongoFilter).flatMapMany(this::find).switchIfEmpty(Flux.empty());
     }
 
-    public Mono<Void> delete(Bson filter) {
-        return MongodbOperations.delete(mongoCollection, filter);
+    public Mono<PageData<E>> pageFindAndFilterByOwner(MongoFilter mongoFilter) {
+        Mono<MongoFilter> ownerFilter = ownerFilter(mongoFilter);
+        Mono<List<E>> dataMono = ownerFilter.flatMapMany(this::find).switchIfEmpty(Flux.empty()).collectList();
+        Mono<Long> countMono = ownerFilter.flatMap(this::count);
+        Page page = mongoFilter.getPage();
+        return Mono.zip(dataMono, countMono).map(tuple2 -> new PageData<>(tuple2.getT1(), tuple2.getT2(), page.getPageNum(), page.getPageSize()));
+    }
+
+    public Mono<Long> count(MongoFilter mongoFilter) {
+        return MongodbOperations.count(mongoCollection, mongoFilter.getFilter());
+    }
+
+    public Mono<Long> countAndFilterByOwner(MongoFilter mongoFilter) {
+        return ownerFilter(mongoFilter).flatMap(this::count);
+    }
+
+    public Mono<Void> delete(MongoFilter mongoFilter) {
+        return MongodbOperations.delete(mongoCollection, mongoFilter.getFilter());
     }
 
 }

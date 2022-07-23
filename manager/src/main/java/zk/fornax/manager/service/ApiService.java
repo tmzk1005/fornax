@@ -15,5 +15,5 @@ public interface ApiService {
 
     @HasRole({ Role.SYSTEM_ADMIN, Role.NORMAL_USER })
     Flux<ApiEntity> listApis(int pageNum, int pageSize);
-    
+
 }

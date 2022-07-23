@@ -14,6 +14,7 @@ import zk.fornax.http.framework.validate.PageSize;
 import zk.fornax.manager.bean.dto.LoginDto;
 import zk.fornax.manager.bean.dto.UserDto;
 import zk.fornax.manager.bean.vo.UserVo;
+import zk.fornax.manager.security.RoleChecker;
 import zk.fornax.manager.service.ServiceFactory;
 import zk.fornax.manager.service.UserService;
 
@@ -43,6 +44,11 @@ public class UserController {
         @PageSize @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize
     ) {
         return userService.listUsers(pageNum, pageSize).map(UserVo::fromPo);
+    }
+
+    @Route(path = "me")
+    public Mono<UserVo> me() {
+        return RoleChecker.getCurrentUser().map(UserVo::fromPo);
     }
 
 }

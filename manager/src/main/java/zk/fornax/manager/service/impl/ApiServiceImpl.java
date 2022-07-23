@@ -13,7 +13,7 @@ import zk.fornax.manager.repository.RepositoryFactory;
 import zk.fornax.manager.service.ApiService;
 
 public class ApiServiceImpl implements ApiService {
-    
+
     private final ApiRepository apiRepository = RepositoryFactory.get(ApiRepository.class);
 
     private final ApiGroupRepository apiGroupRepository = RepositoryFactory.get(ApiGroupRepository.class);

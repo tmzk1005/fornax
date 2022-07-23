@@ -8,6 +8,7 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import zk.fornax.manager.FornaxManagerServerBootstrap;
 import zk.fornax.manager.bean.po.ApiEntity;
 import zk.fornax.manager.bean.po.ApiGroupEntity;
+import zk.fornax.manager.bean.po.AppEntity;
 import zk.fornax.manager.bean.po.User;
 import zk.fornax.manager.db.mangodb.MongodbHelper;
 
@@ -21,6 +22,7 @@ public class RepositoryFactory {
         REPOSITORY_MAP.put(UserRepository.class, new UserRepository(mongoClient, databaseName, User.class));
         REPOSITORY_MAP.put(ApiGroupRepository.class, new ApiGroupRepository(mongoClient, databaseName, ApiGroupEntity.class));
         REPOSITORY_MAP.put(ApiRepository.class, new ApiRepository(mongoClient, databaseName, ApiEntity.class));
+        REPOSITORY_MAP.put(AppRepository.class, new AppRepository(mongoClient, databaseName, AppEntity.class));
     }
 
     private RepositoryFactory() {
