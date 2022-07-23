@@ -1,6 +1,5 @@
 package zk.fornax.manager.controller;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import zk.fornax.common.httpapi.HttpMethod;
@@ -10,6 +9,7 @@ import zk.fornax.http.framework.annotation.RequestParam;
 import zk.fornax.http.framework.annotation.Route;
 import zk.fornax.http.framework.validate.PageNum;
 import zk.fornax.http.framework.validate.PageSize;
+import zk.fornax.manager.bean.PageData;
 import zk.fornax.manager.bean.dto.ApiGroupDto;
 import zk.fornax.manager.bean.vo.ApiGroupVo;
 import zk.fornax.manager.service.ApiGroupService;
@@ -26,11 +26,11 @@ public class ApiGroupController {
     }
 
     @Route
-    public Flux<ApiGroupVo> listApiGroups(
+    public Mono<PageData<ApiGroupVo>> listApiGroups(
         @PageNum @RequestParam(name = "pageNum", required = false, defaultValue = "1") int pageNum,
         @PageSize @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize
     ) {
-        return apiGroupService.listApiGroups(pageNum, pageSize).map(ApiGroupVo::fromPo);
+        return apiGroupService.listApiGroups(pageNum, pageSize).map(page -> page.map(ApiGroupVo::fromPo));
     }
 
 }
