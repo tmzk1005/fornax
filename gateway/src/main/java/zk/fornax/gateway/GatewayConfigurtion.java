@@ -31,4 +31,12 @@ public class GatewayConfigurtion extends ServerConfiguration {
     @Option(names = "--api.localtion.file", description = "The json file define http apis")
     private String apiJsonFile = "conf/fornax-gateway-httpapis.json";
 
+    @Getter
+    @Option(names = "--manager.serverAddress", description = "The manager server http address for fetch api information")
+    private String managerServerAddrees = "http://127.0.0.1:9000";
+
+    @Getter
+    @Option(names = "--manager.enabled", description = "Set if the manager server should enabled.")
+    private boolean managerEnabled = false;
+
 }

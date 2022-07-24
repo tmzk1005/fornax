@@ -24,4 +24,14 @@ public class CompositeHttpApiLocator implements HttpApiLocator {
         return this.delegates.flatMapSequential(httpApiLocator -> httpApiLocator.getHttpApis(path));
     }
 
+    @Override
+    public void startup() {
+        delegates.doOnNext(httpApiLocator -> httpApiLocator.startup()).subscribe();
+    }
+
+    @Override
+    public void shutdown() {
+        delegates.doOnNext(httpApiLocator -> httpApiLocator.shutdown()).subscribe();
+    }
+
 }

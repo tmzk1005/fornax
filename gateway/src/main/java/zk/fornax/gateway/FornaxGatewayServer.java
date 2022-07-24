@@ -88,7 +88,9 @@ public class FornaxGatewayServer extends AbstractHttpServer {
             JsonFileHttpApiLocator jsonFileHttpApiLocator = new JsonFileHttpApiLocator(path);
             httpApiLocators.add(jsonFileHttpApiLocator);
         }
-        httpApiLocators.add(new GatewayHttpApiLocator());
+        if (configurtion.isManagerEnabled()) {
+            httpApiLocators.add(new GatewayHttpApiLocator(configurtion.getManagerServerAddrees()));
+        }
         this.httpApiLocator = new CompositeHttpApiLocator(httpApiLocators.toArray(new HttpApiLocator[0]));
     }
 
