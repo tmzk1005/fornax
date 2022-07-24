@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import lombok.EqualsAndHashCode;
 import lombok.extern.log4j.Log4j2;
@@ -44,7 +45,11 @@ public class GatewayHttpApiLocator implements HttpApiLocator {
 
     @Override
     public Flux<HttpApi> getHttpApis(String path) {
-        return Flux.empty();
+        if (AntPathMatcher.getDefaultInstance().isPattern(path)) {
+            return cache.get(PATTERN_PATH_KEY);
+        } else {
+            return cache.get(path);
+        }
     }
 
     @Override
@@ -54,6 +59,7 @@ public class GatewayHttpApiLocator implements HttpApiLocator {
             return;
         }
         log.info("Start GatewayHttpApiLocator.");
+        scheduledExecutorService.scheduleAtFixedRate(this::fetchChangedApis, 0, 5, TimeUnit.MINUTES);
     }
 
     @Override
@@ -74,7 +80,7 @@ public class GatewayHttpApiLocator implements HttpApiLocator {
 
     private class ApiSynchronizer {
 
-        public static final String MANAGER_FETCH_API_URL_PREFIX = "/fornax/Api/HttpApi?timeMillis=";
+        public static final String MANAGER_FETCH_API_URL_PREFIX = "/fornax/Api/httpApi?timeMillis=";
 
         private long latestTimestamp = 0L;
 
