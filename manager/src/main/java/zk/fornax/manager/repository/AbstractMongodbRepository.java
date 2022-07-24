@@ -66,6 +66,13 @@ public abstract class AbstractMongodbRepository<E extends AuditableEntity<User, 
         return MongodbOperations.find(mongoCollection, mongoFilter);
     }
 
+    public Mono<PageData<E>> pageFind(MongoFilter mongoFilter) {
+        Mono<List<E>> dataMono = MongodbOperations.find(mongoCollection, mongoFilter).collectList();
+        Mono<Long> countMono = MongodbOperations.count(mongoCollection, mongoFilter.getFilter());
+        Page page = mongoFilter.getPage();
+        return Mono.zip(dataMono, countMono).map(tuple2 -> new PageData<>(tuple2.getT1(), tuple2.getT2(), page.getPageNum(), page.getPageSize()));
+    }
+
     public Mono<E> findOneById(String id) {
         try {
             new ObjectId(id);

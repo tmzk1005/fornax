@@ -4,13 +4,13 @@ import java.util.Objects;
 
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import zk.fornax.http.core.session.ReactiveRequestContextHolder;
 import zk.fornax.http.core.session.RequestContext;
 import zk.fornax.http.core.session.WebSession;
 import zk.fornax.http.framework.security.Pbkdf2PasswordEncoder;
+import zk.fornax.manager.bean.PageData;
 import zk.fornax.manager.bean.dto.LoginDto;
 import zk.fornax.manager.bean.dto.UserDto;
 import zk.fornax.manager.bean.po.User;
@@ -39,9 +39,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Flux<User> listUsers(int pageNum, int pageSize) {
+    public Mono<PageData<User>> listUsers(int pageNum, int pageSize) {
         MongoFilter filter = MongoFilter.empty().page(pageNum, pageSize);
-        return userRepository.find(filter);
+        return userRepository.pageFind(filter);
     }
 
     private static boolean passwordMatch(String dtoPassword, String hashedPassword) {

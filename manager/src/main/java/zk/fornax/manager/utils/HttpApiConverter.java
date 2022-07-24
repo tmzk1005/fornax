@@ -7,7 +7,7 @@ public class HttpApiConverter {
 
     private HttpApiConverter() {
     }
-    
+
     public static HttpApi convert(ApiEntity apiEntity) {
         HttpApi httpApi = new HttpApi();
         httpApi.setId(apiEntity.getId());
