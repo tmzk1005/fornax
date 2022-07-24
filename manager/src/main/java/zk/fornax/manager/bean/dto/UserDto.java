@@ -16,7 +16,7 @@ public class UserDto implements Dto, Validatable {
 
     @NotBlank(message = "用户名不能为空")
     @Size(min = 1, max = 16, message = "用户名不能超过16个字符长度")
-    @Pattern(regexp = Patters.IDENTIFIER_ZH, message = "用户名只能包含字母，数字，中文字符和下划线")
+    @Pattern(regexp = Patters.IDENTIFIER, message = "用户名只能包含字母，数字和下划线")
     private String username;
 
     @NotBlank(message = "用户昵称不能为空")
