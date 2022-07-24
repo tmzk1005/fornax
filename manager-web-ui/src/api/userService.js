@@ -51,11 +51,16 @@ const getUsers = (pageNum, pageSize) => {
   return HttpClient.get(ApiPaths.user, { params: params })
 }
 
+const createUser = (userDto) => {
+  return HttpClient.post(ApiPaths.user, userDto)
+}
+
 const UserService = {
   login: login,
   logout: logout,
   getSessionUser: getSessionUser,
-  getUsers: getUsers
+  getUsers: getUsers,
+  createUser: createUser,
 }
 
 export { UserService }
