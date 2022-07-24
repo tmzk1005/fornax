@@ -20,6 +20,8 @@ import zk.fornax.manager.dbinit.DatabaseInit;
 
 public class FornaxManagerServer extends AbstractHttpServer {
 
+    private static final String API_CONTEXT_PATH = "/fornax/";
+
     private static final String STATIC_ROOT = "static";
 
     @Getter
@@ -28,7 +30,12 @@ public class FornaxManagerServer extends AbstractHttpServer {
     private final WebHandler webHandler = new ChainBasedWebHandler(
         List.of(
             new ExceptionHandleHttpApiFilter(),
-            new AuthenticationHttpApiFilter(List.of("/Info", "/User/_login")),
+            new AuthenticationHttpApiFilter(
+                List.of(
+                    API_CONTEXT_PATH + "Info",
+                    API_CONTEXT_PATH + "User/_login"
+                )
+            ),
             new ControllerMethodInvokeHttpFilter()
         )
     );
@@ -37,11 +44,12 @@ public class FornaxManagerServer extends AbstractHttpServer {
         super(
             configuration.getServerHost(),
             configuration.getServerPort(),
-            new ControllerHttpApiLocator(FornaxManagerServer.class.getPackageName() + ".controller"),
+            new ControllerHttpApiLocator(API_CONTEXT_PATH, FornaxManagerServer.class.getPackageName() + ".controller"),
             new HttpApiMatcherImpl(),
             new WebSessionManagerImpl()
         );
         this.configuration = configuration;
+        this.apiContextPath = API_CONTEXT_PATH;
         this.staticResourceRootPath = configuration.getFornaxHome().resolve(STATIC_ROOT).toAbsolutePath().normalize();
         if (Files.notExists(staticResourceRootPath)) {
             throw new FornaxRuntimeException("Static resource directroy " + staticResourceRootPath + " not exists!");

@@ -54,12 +54,13 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
         }
         HttpMethod requestMethod = HttpMethod.resolve(webExchange.getRequest().method().name());
         String requestPath = webExchange.getRequest().fullPath();
-        String requestPathWithOutPrefix = HttpPathNormalizer.removeFirstSegment(requestPath);
-        final Method method = controllerMeta.getMethod(requestMethod, requestPathWithOutPrefix);
+        // 要去掉前2节路径：第一节是contextPath, 第二节是Controller的名称路径; 最后才是用于Route匹配的路径
+        String routePath = HttpPathNormalizer.removeFirstSegment(HttpPathNormalizer.removeFirstSegment(requestPath));
+        final Method method = controllerMeta.getMethod(requestMethod, routePath);
         if (Objects.isNull(method)) {
             return sendNotFound(webExchange);
         }
-        return new InvokerContext(controllerMeta.getController(), method, webExchange, requestPathWithOutPrefix).invoke()
+        return new InvokerContext(controllerMeta.getController(), method, webExchange, routePath).invoke()
             .onErrorResume(throwable -> handleException(throwable, webExchange, controllerMeta, method))
             .then(Mono.defer(() -> webExchange.getResponse().hasSentHeaders() ? Mono.empty() : chain.filter(webExchange)));
     }
@@ -266,7 +267,7 @@ public class ControllerMethodInvokeHttpFilter implements HttpApiFilter {
             }
         }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         private Mono<Void> handleInvokeResult(Object invokeResult) {
             Object finalInvokeResult = invokeResult;
             if (finalInvokeResult instanceof Flux<?> flux) {

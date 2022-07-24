@@ -59,7 +59,7 @@ const handleError = (error) => {
 }
 
 const HttpClient = axios.create({
-  baseURL: "/",
+  baseURL: "/fornax/",
   headers: {
     "Content-Type": "application/json;charset=UTF-8;",
   },

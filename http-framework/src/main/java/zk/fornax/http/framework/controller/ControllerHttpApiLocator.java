@@ -26,7 +26,10 @@ public class ControllerHttpApiLocator implements HttpApiLocator {
 
     private final String controllerPackageName;
 
-    public ControllerHttpApiLocator(String controllerPackageName) {
+    private final String contextPath;
+
+    public ControllerHttpApiLocator(String contextPath, String controllerPackageName) {
+        this.contextPath = contextPath;
         this.controllerPackageName = controllerPackageName;
         parseControllerFromClassPath();
         httpApiFlux = Flux.fromIterable(httpApis);
@@ -56,12 +59,12 @@ public class ControllerHttpApiLocator implements HttpApiLocator {
         }
     }
 
-    private static HttpApi convertFromControllerMeta(ControllerMeta controllerMeta) {
+    private HttpApi convertFromControllerMeta(ControllerMeta controllerMeta) {
         final HttpApi httpApi = new HttpApi();
         final String name = controllerMeta.getName();
         httpApi.setId(name);
         httpApi.setApiStatus(ApiStatus.ONLINE);
-        httpApi.setPath("/" + name + "/**");
+        httpApi.setPath(contextPath + name + "/**");
         httpApi.setHttpMethods(ALL_HTTP_METHODS);
         httpApi.setLastModifiedTimestamp(System.currentTimeMillis());
         HttpApiControllerMetaHelper.putControllerMeta(httpApi, controllerMeta);

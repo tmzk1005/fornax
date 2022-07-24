@@ -30,10 +30,6 @@ import zk.fornax.http.core.session.WebSessionManager;
 @Log4j2
 public abstract class AbstractHttpServer implements Server {
 
-    private static final String STATIC_RESOURCE_PATH_PREFIX = "static/";
-
-    private static final int PATH_START_INDEX = STATIC_RESOURCE_PATH_PREFIX.length();
-
     protected final String host;
 
     protected final int port;
@@ -53,6 +49,8 @@ public abstract class AbstractHttpServer implements Server {
     protected final AtomicBoolean started = new AtomicBoolean(false);
 
     protected Path staticResourceRootPath;
+
+    protected String apiContextPath = "/";
 
     protected AbstractHttpServer(String host, int port) {
         this.host = host;
@@ -82,7 +80,7 @@ public abstract class AbstractHttpServer implements Server {
         if (!canStartup) {
             return;
         }
-        HttpHandler httpHandler = Objects.nonNull(staticResourceRootPath) ? new HttpHandlerSupportStatic() : new HttpHandler();
+        HttpHandler httpHandler = supportStaticResource() ? new HttpHandlerSupportStatic() : new HttpHandler();
         try {
             disposableServer = HttpServer.create().host(host).port(port).handle(httpHandler).bindNow();
         } catch (Exception exception) {
@@ -95,6 +93,11 @@ public abstract class AbstractHttpServer implements Server {
         isStartingUp.set(false);
         startSucceed();
         disposableServer.onDispose().block();
+    }
+
+    public boolean supportStaticResource() {
+        return Objects.nonNull(apiContextPath) && apiContextPath.length() > 1
+            && Objects.nonNull(staticResourceRootPath) && staticResourceRootPath.toFile().isDirectory();
     }
 
     @Override
@@ -170,22 +173,26 @@ public abstract class AbstractHttpServer implements Server {
 
         @Override
         public Mono<Void> apply(HttpServerRequest request, HttpServerResponse response) {
-            String path = request.path();
-            if (path.startsWith(STATIC_RESOURCE_PATH_PREFIX)) {
-                return serveStaticResource(path, response);
-            } else {
+            String path = request.fullPath();
+            if (path.startsWith(apiContextPath)) {
                 return super.apply(request, response);
+            } else {
+                // path()和fullPath()是不同的！这里为了后续静态资源处理方便，传递过去的是path()
+                return serveStaticResource(request.path(), response);
             }
         }
 
         public Mono<Void> serveStaticResource(String path, HttpServerResponse response) {
-            Path resourcePath = staticResourceRootPath.resolve(path.substring(PATH_START_INDEX)).toAbsolutePath().normalize();
+            if ("/".equals(path)) {
+                path = "index.html";
+            }
+            Path resourcePath = staticResourceRootPath.resolve(path).toAbsolutePath().normalize();
             if (!resourcePath.startsWith(staticResourceRootPath) || Files.notExists(resourcePath)) {
-                return response.sendNotFound();
+                return ResponseHelper.sendJson(response, HttpResponseStatus.NOT_FOUND);
             }
             File file = resourcePath.toFile();
             if (!file.isFile()) {
-                return response.sendNotFound();
+                return ResponseHelper.sendJson(response, HttpResponseStatus.NOT_FOUND);
             }
 
             long contentLength = file.length();
