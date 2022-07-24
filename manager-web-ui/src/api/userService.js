@@ -1,7 +1,7 @@
-import { HttpClient, NoAuto } from "@/utils/http"
-import store from "@/store"
-import { Paths, ApiPaths } from "@/utils/pathConstants"
 import router from "@/router"
+import store from "@/store"
+import { HttpClient, NoAuto } from "@/utils/http"
+import { ApiPaths, Paths } from "@/utils/pathConstants"
 
 const getLoginPath = () => {
   return store.getters.isModeManagement ? Paths.apiManagementLoginPath : Paths.apiMarketLoginPath
@@ -46,10 +46,16 @@ const getSessionUser = () => {
   })
 }
 
+const getUsers = (pageNum, pageSize) => {
+  const params = { pageNum: pageNum, pageSize: pageSize }
+  return HttpClient.get(ApiPaths.user, { params: params })
+}
+
 const UserService = {
   login: login,
   logout: logout,
-  getSessionUser: getSessionUser
+  getSessionUser: getSessionUser,
+  getUsers: getUsers
 }
 
 export { UserService }

@@ -17,6 +17,11 @@
       <span>应用</span>
     </a-menu-item>
 
+    <a-menu-item key="user" v-if="store.getters.isSystemAdmin" @click="goToPage(Paths.amUser)">
+      <appstore-outlined />
+      <span>用户管理</span>
+    </a-menu-item>
+
     <a-sub-menu key="settings">
       <template #title>
         <span>
@@ -35,7 +40,9 @@
 import { AreaChartOutlined, ApiOutlined, GroupOutlined, SettingOutlined, AppstoreOutlined } from '@ant-design/icons-vue'
 import { useRouter } from "vue-router"
 import { Paths } from "@/utils/pathConstants"
+import { useStore } from 'vuex'
 
+const store = useStore()
 const router = useRouter()
 
 const goToPage = function (path) {

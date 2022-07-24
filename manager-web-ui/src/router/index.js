@@ -26,6 +26,10 @@ const apiManagementRoutes = {
     {
       path: Paths.amDashboard,
       component: () => import("@/views/apiManagement/AmDashboard.vue")
+    },
+    {
+      path: Paths.amUser,
+      component: () => import("@/views/apiManagement/AmUser.vue")
     }
   ]
 }
