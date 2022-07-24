@@ -17,6 +17,10 @@ public interface ApiService {
     @HasRole({ Role.SYSTEM_ADMIN, Role.NORMAL_USER })
     Mono<PageData<ApiEntity>> listApis(int pageNum, int pageSize);
 
+    Mono<ApiEntity> publishApi(String apiId);
+
+    Mono<ApiEntity> offlineApi(String apiId);
+
     Flux<ApiEntity> listChangedApisAfterLastModifiedTime(long timeMillis);
 
 }

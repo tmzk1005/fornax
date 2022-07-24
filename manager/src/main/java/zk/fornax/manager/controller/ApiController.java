@@ -11,6 +11,7 @@ import zk.fornax.http.framework.annotation.RequestParam;
 import zk.fornax.http.framework.annotation.Route;
 import zk.fornax.http.framework.validate.PageNum;
 import zk.fornax.http.framework.validate.PageSize;
+import zk.fornax.http.framework.validate.PathVariable;
 import zk.fornax.manager.bean.PageData;
 import zk.fornax.manager.bean.dto.ApiDto;
 import zk.fornax.manager.bean.vo.ApiVo;
@@ -34,6 +35,16 @@ public class ApiController {
         @PageSize @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize
     ) {
         return apiService.listApis(pageNum, pageSize).map(page -> page.map(ApiVo::fromPo));
+    }
+
+    @Route(path = "_publish/{apiId}", method = HttpMethod.POST)
+    public Mono<ApiVo> publish(@PathVariable("apiId") String apiId) {
+        return apiService.publishApi(apiId).map(ApiVo::fromPo);
+    }
+
+    @Route(path = "_offline/{apiId}", method = HttpMethod.POST)
+    public Mono<ApiVo> offline(@PathVariable("apiId") String apiId) {
+        return apiService.offlineApi(apiId).map(ApiVo::fromPo);
     }
 
     /**

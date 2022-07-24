@@ -8,6 +8,7 @@ import zk.fornax.http.core.session.ReactiveRequestContextHolder;
 import zk.fornax.http.core.session.WebSession;
 import zk.fornax.http.framework.exception.AccessDeniedException;
 import zk.fornax.manager.bean.Role;
+import zk.fornax.manager.bean.po.BaseAuditableEntity;
 import zk.fornax.manager.bean.po.User;
 
 public class ContextHelper {
@@ -46,6 +47,10 @@ public class ContextHelper {
             }
             return matched;
         });
+    }
+
+    public static <E extends BaseAuditableEntity<?>> Mono<Boolean> currentUserOwnEntity(E entity) {
+        return getCurrentUser().map(user -> user.getId().equals(entity.getCreatedBy().getId()));
     }
 
 }
