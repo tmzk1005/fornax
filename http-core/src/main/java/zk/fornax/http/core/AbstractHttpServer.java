@@ -183,7 +183,7 @@ public abstract class AbstractHttpServer implements Server {
         }
 
         public Mono<Void> serveStaticResource(String path, HttpServerResponse response) {
-            if ("/".equals(path)) {
+            if ("".equals(path) || "/".equals(path)) {
                 path = "index.html";
             }
             Path resourcePath = staticResourceRootPath.resolve(path).toAbsolutePath().normalize();
