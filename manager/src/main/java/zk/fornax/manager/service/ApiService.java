@@ -1,5 +1,6 @@
 package zk.fornax.manager.service;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import zk.fornax.manager.bean.PageData;
@@ -15,5 +16,7 @@ public interface ApiService {
 
     @HasRole({ Role.SYSTEM_ADMIN, Role.NORMAL_USER })
     Mono<PageData<ApiEntity>> listApis(int pageNum, int pageSize);
+
+    Flux<ApiEntity> listChangedApisAfterLastModifiedTime(long timeMillis);
 
 }

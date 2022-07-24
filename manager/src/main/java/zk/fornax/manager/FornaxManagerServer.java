@@ -33,7 +33,8 @@ public class FornaxManagerServer extends AbstractHttpServer {
             new AuthenticationHttpApiFilter(
                 List.of(
                     API_CONTEXT_PATH + "Info",
-                    API_CONTEXT_PATH + "User/_login"
+                    API_CONTEXT_PATH + "User/_login",
+                    API_CONTEXT_PATH + "Api/httpApi"
                 )
             ),
             new ControllerMethodInvokeHttpFilter()
