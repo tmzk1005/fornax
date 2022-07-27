@@ -42,6 +42,12 @@ public class MongoFilter {
         return filter(Filters.eq("_id", new ObjectId(id)));
     }
 
+    public static MongoFilter byIds(Iterable<String> ids) {
+        List<ObjectId> objectIds = new ArrayList<>();
+        ids.forEach(id -> objectIds.add(new ObjectId(id)));
+        return filter(Filters.in("_id", objectIds));
+    }
+
     public static MongoFilter byCreatorId(String id) {
         return filter(Filters.eq(BaseAuditableEntity.CREATED_BY, new ObjectId(id)));
     }
