@@ -3,8 +3,11 @@ package zk.fornax.manager.security;
 import java.util.Objects;
 
 import reactor.core.publisher.Mono;
+import reactor.netty.http.server.HttpServerRequest;
 
+import zk.fornax.http.core.exchange.WebExchange;
 import zk.fornax.http.core.session.ReactiveRequestContextHolder;
+import zk.fornax.http.core.session.RequestContext;
 import zk.fornax.http.core.session.WebSession;
 import zk.fornax.http.framework.exception.AccessDeniedException;
 import zk.fornax.manager.bean.Role;
@@ -51,6 +54,14 @@ public class ContextHelper {
 
     public static <E extends BaseAuditableEntity<?>> Mono<Boolean> currentUserOwnEntity(E entity) {
         return getCurrentUser().map(user -> user.getId().equals(entity.getCreatedBy().getId()));
+    }
+
+    public static Mono<WebExchange> currentExchange() {
+        return ReactiveRequestContextHolder.getContext().map(RequestContext::getWebExchange);
+    }
+
+    public static Mono<HttpServerRequest> currentRequest() {
+        return currentExchange().map(WebExchange::getRequest);
     }
 
 }
