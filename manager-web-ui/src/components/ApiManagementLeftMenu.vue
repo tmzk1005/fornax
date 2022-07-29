@@ -12,10 +12,6 @@
       <group-outlined />
       <span>API分组</span>
     </a-menu-item>
-    <a-menu-item key="app" @click="goToPage(Paths.amApp)">
-      <appstore-outlined />
-      <span>应用</span>
-    </a-menu-item>
 
     <a-menu-item key="user" v-if="store.getters.isSystemAdmin" @click="goToPage(Paths.amUser)">
       <appstore-outlined />

@@ -6,10 +6,10 @@ const Paths = {
   amApi: "/api-management/api",
   amApiCreate: "/api-management/api/create",
   amApiGroup: "/api-management/apiGroup",
-  amApp: "/api-management/app",
   amDashboard: "/api-management/dashboard",
   amUser: "/api-management/user",
   mktApiList: "/api-market/api",
+  mktMyApp: "/api-market/app",
 }
 
 const ApiPaths = {

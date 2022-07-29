@@ -1,7 +1,7 @@
 <template>
   <a-row style="margin-top: 150px">
     <a-col :offset="14" :span="6">
-      <span style="font-size: 2rem; float: right">登录-Grace-API市场</span>
+      <span style="font-size: 2rem; float: right">登录-Fornax-API市场</span>
     </a-col>
   </a-row>
   <a-row>

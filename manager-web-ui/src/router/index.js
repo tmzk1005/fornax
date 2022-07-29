@@ -20,10 +20,6 @@ const apiManagementRoutes = {
       component: () => import("@/views/apiManagement/AmApiGroup.vue")
     },
     {
-      path: Paths.amApp,
-      component: () => import("@/views/apiManagement/AmApp.vue")
-    },
-    {
       path: Paths.amDashboard,
       component: () => import("@/views/apiManagement/AmDashboard.vue")
     },
@@ -42,6 +38,10 @@ const apiMarketRoutes = {
     {
       path: Paths.mktApiList,
       component: () => import("@/views/apiMarket/MktApiList.vue")
+    },
+    {
+      path: Paths.mktMyApp,
+      component: () => import("@/views/apiMarket/MyApp.vue")
     },
   ]
 }
